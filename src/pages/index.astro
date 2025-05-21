@@ -1,11 +1,97 @@
 ---
-import Welcome from '../components/Welcome.astro';
-import Layout from '../layouts/Layout.astro';
+import MainLayout from '../layouts/MainLayout.astro';
+import ProfileSection from '../components/ProfileSection.astro';
+import PostCard from '../components/PostCard.astro';
+import Button from '../components/Button.astro';
 
-// Welcome to Astro! Wondering what to do next? Check out the Astro documentation at https://docs.astro.build
-// Don't want to use any of this? Delete everything in this file, the `assets`, `components`, and `layouts` directories, and start fresh.
+// Demo posts data (in a real project, you might fetch this from a CMS or markdown files)
+const posts = [
+  {
+    title: 'IFEST13 CTF UAJY 2025 - Writeup',
+    date: '11 Mei 2025',
+    time: '09:00 PM',
+    excerpt: 'team no fasilkom no worries',
+    url: '/posts/ifest13-ctf-writeup'
+  },
+  {
+    title: 'IFEST13 CTF UAJY 2025 - Writeup',
+    date: '11 Mei 2025',
+    time: '09:00 PM',
+    excerpt: 'team no fasilkom no worries',
+    url: '/posts/ifest13-ctf-writeup'
+  },
+  {
+    title: 'IFEST13 CTF UAJY 2025 - Writeup',
+    date: '11 Mei 2025',
+    time: '09:00 PM',
+    excerpt: 'team no fasilkom no worries',
+    url: '/posts/ifest13-ctf-writeup'
+  }
+];
 ---
 
-<Layout>
-	<Welcome />
-</Layout>
+<MainLayout title="Gafnaa - Home">
+  <ProfileSection />
+  
+  <div class="bio-section">
+    <p>
+      Lorem ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been 
+      the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of 
+      type and scrambled it to make a type specimen book. It has survived not only five centuries, but also 
+      the leap into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s 
+      with the release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop 
+      publishing software like Aldus PageMaker including versions of Lorem Ipsum.
+    </p>
+  </div>
+  
+  <hr />
+  
+  <section class="recent-posts">
+    <h2>Recent Posts</h2>
+    
+    <div class="posts-container">
+      {posts.map(post => (
+        <PostCard 
+          title={post.title}
+          date={post.date}
+          time={post.time}
+          excerpt={post.excerpt}
+          url={post.url}
+        />
+      ))}
+    </div>
+    
+    <div class="more-btn">
+      <Button text="More Posts" href="/posts" />
+    </div>
+  </section>
+</MainLayout>
+
+<style>
+  .bio-section {
+	margin-top: 2rem;
+	padding: 2rem 0;
+    max-width: fit-content;
+    margin: 0 auto;
+  }
+  
+  .bio-section p {
+    font-size: 1rem;
+    line-height: 1.7;
+    opacity: 0.9;
+  }
+  
+  .recent-posts h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1 rem;
+  }
+  
+  .posts-container {
+    margin-bottom: 2rem;
+  }
+  
+  .more-btn {
+    display: flex;
+    justify-content: center;
+  }
+</style>

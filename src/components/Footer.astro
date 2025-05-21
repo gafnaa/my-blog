@@ -1,0 +1,31 @@
+<footer class="footer">
+  <hr />
+  <p>&copy; {new Date().getFullYear()} gafnaa. | All rights reserved.</p>
+</footer>
+
+<style>
+  .footer {
+    width: 100%;
+    margin-top: 4rem;
+  }
+
+  .footer hr {
+    border: none;
+    border-top: 1px solid var(--border-color); /* atau ganti dengan warna spesifik */
+    width: 100%;
+    margin: 0;
+  }
+
+  .footer p {
+    text-align: center;
+    padding: 1.5rem 1rem;
+    font-size: 0.9rem;
+    color: var(--text-color);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    .footer p {
+      color: #aaa;
+    }
+  }
+</style>

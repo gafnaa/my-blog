@@ -1,0 +1,78 @@
+---
+import MainLayout from '../../layouts/MainLayout.astro';
+import PostCard from '../../components/PostCard.astro';
+
+// Demo posts data (in a real project, you might fetch this from a CMS or markdown files)
+const posts = [
+  {
+    title: 'IFEST13 CTF UAJY 2025 - Writeup',
+    date: '11 Mei 2025',
+    time: '09:00 PM',
+    excerpt: 'team no fasilkom no worries',
+    url: '/posts/ifest13-ctf-writeup'
+  },
+  {
+    title: 'IFEST13 CTF UAJY 2025 - Writeup',
+    date: '11 Mei 2025',
+    time: '09:00 PM',
+    excerpt: 'team no fasilkom no worries',
+    url: '/posts/ifest13-ctf-writeup'
+  },
+  {
+    title: 'IFEST13 CTF UAJY 2025 - Writeup',
+    date: '11 Mei 2025',
+    time: '09:00 PM',
+    excerpt: 'team no fasilkom no worries',
+    url: '/posts/ifest13-ctf-writeup'
+  },
+  {
+    title: 'IFEST13 CTF UAJY 2025 - Writeup',
+    date: '11 Mei 2025',
+    time: '09:00 PM',
+    excerpt: 'team no fasilkom no worries',
+    url: '/posts/ifest13-ctf-writeup'
+  },
+  {
+    title: 'IFEST13 CTF UAJY 2025 - Writeup',
+    date: '11 Mei 2025',
+    time: '09:00 PM',
+    excerpt: 'team no fasilkom no worries',
+    url: '/posts/ifest13-ctf-writeup'
+  }
+];
+---
+
+<MainLayout title="Gafnaa - Posts">
+  <div class="posts-container">
+    <h1>All Posts</h1>
+    
+    <div class="posts-grid">
+      {posts.map(post => (
+        <PostCard 
+          title={post.title}
+          date={post.date}
+          time={post.time}
+          excerpt={post.excerpt}
+          url={post.url}
+        />
+      ))}
+    </div>
+  </div>
+</MainLayout>
+
+<style>
+  .posts-container {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+  
+  h1 {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+  }
+  
+  .posts-grid {
+    display: grid;
+    gap: 2rem;
+  }
+</style>

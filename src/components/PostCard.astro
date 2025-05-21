@@ -1,0 +1,52 @@
+---
+interface Props {
+  title: string;
+  date: string;
+  time: string;
+  excerpt: string;
+  url: string;
+}
+
+const { title, date, time, excerpt, url } = Astro.props;
+---
+
+<div class="post-card">
+  <a href={url}>
+    <h3>{title}</h3>
+  </a>
+  <div class="post-meta">
+    <span class="date">{date} | {time}</span>
+  </div>
+  <p class="excerpt">{excerpt}</p>
+</div>
+
+<style>
+  .post-card {
+    margin-bottom: 1.5rem;
+  }
+  
+  .post-card h3 {
+    color: var(--accent-color);
+    font-size: 1.25rem;
+    margin-bottom: 0.25rem;
+    transition: opacity 0.2s ease;
+  }
+  
+  .post-card h3:hover {
+    opacity: 0.8;
+  }
+  
+  .post-meta {
+    margin-bottom: 0.5rem;
+  }
+  
+  .date {
+    font-size: 0.85rem;
+    opacity: 0.7;
+  }
+  
+  .excerpt {
+    font-size: 0.95rem;
+    opacity: 0.9;
+  }
+</style>
