@@ -4,12 +4,39 @@ Website portfolio personal yang dibuat menggunakan [Astro](https://astro.build/)
 Menampilkan profil, keahlian, dan tautan sosial, dengan desain clean dan responsif.
 
 
-
 ## Teknologi
 
 - [Astro](https://astro.build/)
 - HTML, CSS (flexbox)
 
+## Struktur Direktori
+```bash
+src
+├── assets
+│   ├── astro.svg
+│   ├── background.svg
+│   └── sankya.jpg
+├── components
+│   ├── Button.astro
+│   ├── Footer.astro
+│   ├── Header.astro
+│   ├── PostCard.astro
+│   └── ProfileSection.astro
+├── consts.ts
+├── content.config.ts
+├── layouts
+│   └── MainLayout.astro
+├── pages
+│   ├── about.astro
+│   ├── achievements.astro
+│   ├── index.astro
+│   ├── posts
+│   │   └── index.astro
+│   ├── projects.astro
+│   └── rss.xml.js
+└── styles
+    └── global.css
+```
 
 ## Development
 
