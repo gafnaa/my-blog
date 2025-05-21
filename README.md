@@ -1,7 +1,6 @@
 # My Personal Portfolio
 
-Website portfolio personal yang dibuat menggunakan [Astro](https://astro.build/).  
-Menampilkan profil, keahlian, dan tautan sosial, dengan desain clean dan responsif.
+Website portfolio saya. Sekalian nyoba Astro juga sih
 
 
 ## Teknologi
