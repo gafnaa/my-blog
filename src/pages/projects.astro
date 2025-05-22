@@ -193,3 +193,17 @@ const videos = [
   }
 
   /* Removed .video-wrapper p style */
+
+  @media (max-width: 768px) {
+    .projects-grid {
+      grid-template-columns: 1fr; /* Single column on mobile */
+    }
+
+    .project-card {
+      width: auto; /* Allow card to take full width */
+    }
+
+    .videos-grid {
+      grid-template-columns: 1fr; /* Single column on mobile */
+    }
+  }

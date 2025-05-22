@@ -37,50 +37,5 @@ const { title } = Astro.props;
       </main>
       <Footer />
     </div>
-    <script is:inline>
-      const pages = [
-        '/',
-        '/about',
-        '/projects',
-        '/posts',
-        '/achievements'
-      ];
-      let touchstartX = 0;
-      let touchendX = 0;
-
-      function checkDirection() {
-        const threshold = 50; // Minimum swipe distance
-        const currentIndex = pages.indexOf(window.location.pathname);
-
-        if (touchendX < touchstartX - threshold) {
-          // Swiped left
-          if (currentIndex < pages.length - 1) {
-            window.location.href = pages[currentIndex + 1];
-          } else {
-            // Loop back to the first page
-            window.location.href = pages[0];
-          }
-        }
-
-        if (touchendX > touchstartX + threshold) {
-          // Swiped right
-          if (currentIndex > 0) {
-            window.location.href = pages[currentIndex - 1];
-          } else {
-            // Loop back to the last page
-            window.location.href = pages[pages.length - 1];
-          }
-        }
-      }
-
-      document.addEventListener('touchstart', e => {
-        touchstartX = e.changedTouches[0].screenX;
-      });
-
-      document.addEventListener('touchend', e => {
-        touchendX = e.changedTouches[0].screenX;
-        checkDirection();
-      });
-    </script>
   </body>
 </html>
