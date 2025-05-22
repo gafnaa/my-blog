@@ -46,11 +46,16 @@ const currentPath = Astro.url.pathname;
   }
   
   .logo a {
-    font-size: 1.8rem;
-    font-weight: 700;
-    color: var(--text-color);
-    text-decoration: none;
-  }
+  font-size: 1.8rem;
+  font-weight: 700;
+  color: var(--text-color);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.logo a:hover {
+  color: #00FFC3; /* ganti dengan warna biru yang kamu pakai */
+}
   
   nav ul {
     display: flex;
