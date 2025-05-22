@@ -7,8 +7,9 @@
 .footer {
   width: 100%;
   margin-top: 4rem;
-  background-color: transparent; /* beri background supaya teks jelas */
+  background-color: transparent;
   color: var(--footer-text, #333);
+  padding: 0; /* Ensure no horizontal padding */
 }
 
 .footer hr {
@@ -28,7 +29,7 @@
 
 @media (prefers-color-scheme: dark) {
   .footer {
-    background-color: var(--footer-bg-dark, #111);
+    background-color: transparent; /* Changed to transparent for dark mode */
     color: var(--footer-text-dark, #aaa);
   }
 }
