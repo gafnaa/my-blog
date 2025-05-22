@@ -1,0 +1,213 @@
+---
+import MainLayout from '../layouts/MainLayout.astro';
+
+// National Events data
+const nationalEvents = [
+  {
+    name: 'TCP1P Ramadan 2025',
+    team: 'LingGangGu',
+    place: '15th place'
+  },
+  {
+    name: 'Find IT CTF 2025',
+    team: 'kata gafna bebas',
+    place: '28th place'
+  },
+  {
+    name: 'IFEST13 UAJY 2025',
+    team: 'no fasilkom no worries',
+    place: 'Finalist'
+  }
+];
+
+// International Events data
+const internationalEvents = [
+  {
+    name: 'HTB Cyber Apocalypse 2025',
+    team: 'mas renan tolong yg smngt yh',
+    place: '1676th place'
+  },
+  {
+    name: 'HTB Try Out 2025',
+    team: 'mas renan tolong yg smngt yh',
+    place: '116th place'
+  },
+  {
+    name: 'PicoCTF 2025',
+    team: 'LingGangGu',
+    place: '2131st place'
+  }
+];
+
+// Tech Certifications data
+const techCerts = [
+  {
+    name: 'MikroTik Certified Network Associate',
+    issuer: 'Mikrotik'
+  },
+  {
+    name: 'Fundamental Penetration Testing',
+    issuer: 'Coding Studio IT Learning Center'
+  },
+  {
+    name: 'Cyber Security Course Level Intermediate',
+    issuer: 'ITBOX'
+  }
+];
+
+// Language Certifications data
+const languageCerts = [
+  {
+    name: 'TOEFL LIKE',
+    score: '597'
+  },
+  {
+    name: 'UKBI',
+    score: '667 (Sangat Unggul)'
+  }
+];
+---
+
+<MainLayout title="Gafnaa - Achievements">
+  <div class="achievements-container">
+    <h1>Achievements</h1>
+    
+    <section class="events-section">
+      <h2>National Events</h2>
+      <ul class="achievements-list">
+        {nationalEvents.map(event => (
+          <li>
+            <span class="event-name">{event.name}</span> - {event.team} - {event.place}
+          </li>
+        ))}
+      </ul>
+    </section>
+    
+    <section class="events-section">
+      <h2>International Events</h2>
+      <ul class="achievements-list">
+        {internationalEvents.map(event => (
+          <li>
+            <span class="event-name">{event.name}</span> - {event.team} - {event.place}
+          </li>
+        ))}
+      </ul>
+    </section>
+    
+    <hr class="section-divider" />
+    
+    <section class="certs-section">
+      <h2>Certificates</h2>
+      
+      <div class="cert-category">
+        <h3>Tech Certs</h3>
+        <ul class="achievements-list">
+          {techCerts.map(cert => (
+            <li>
+              <span class="cert-name">{cert.name}</span> - {cert.issuer}
+            </li>
+          ))}
+        </ul>
+      </div>
+      
+      <div class="cert-category">
+        <h3>Language Certs</h3>
+        <ul class="achievements-list">
+          {languageCerts.map(cert => (
+            <li>
+              <span class="cert-name">{cert.name}</span> - {cert.score}
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+  </div>
+</MainLayout>
+
+<style>
+  .achievements-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+  
+  h1 {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    font-weight: 600;
+  }
+  
+  h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+  }
+  
+  h3 {
+    font-size: 1.25rem;
+    margin-bottom: 1rem;
+    font-weight: 600;
+  }
+  
+  .events-section {
+    margin-bottom: 2rem;
+  }
+  
+  .certs-section {
+    margin-top: 2rem;
+  }
+  
+  .cert-category {
+    margin-bottom: 2rem;
+  }
+  
+  .achievements-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  
+  .achievements-list li {
+    margin-bottom: 0.75rem;
+    padding-left: 1rem;
+    position: relative;
+  }
+  
+  .achievements-list li::before {
+    content: '•';
+    color: var(--accent-color);
+    position: absolute;
+    left: 0;
+    font-weight: bold;
+  }
+  
+  .event-name, .cert-name {
+    color: var(--accent-color);
+    font-weight: 500;
+  }
+  
+  .section-divider {
+    margin: 3rem 0;
+    border: none;
+    height: 1px;
+    background-color: var(--divider-color);
+  }
+  
+  @media (max-width: 768px) {
+    .achievements-container {
+      padding: 0 0.5rem;
+    }
+    
+    h1 {
+      font-size: 1.75rem;
+    }
+    
+    h2 {
+      font-size: 1.25rem;
+    }
+    
+    h3 {
+      font-size: 1.1rem;
+    }
+  }
+</style>
