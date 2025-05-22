@@ -32,7 +32,7 @@ src
 │   ├── posts
 │   │   └── index.astro
 │   ├── projects.astro
-│   └── rss.xml.js
+│   
 └── styles
     └── global.css
 ```

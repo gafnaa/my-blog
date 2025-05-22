@@ -1,62 +1,302 @@
 ---
-import Layout from '../layouts/BlogPost.astro';
+import MainLayout from '../layouts/MainLayout.astro';
+
+// Skills data
+const skills = {
+  frontend: ['HTML', 'CSS', 'JavaScript', 'TypeScript', 'React', 'Vue', 'Astro', 'TailwindCSS'],
+  backend: ['Node.js', 'Express', 'Django', 'Flask', 'PHP', 'Laravel'],
+  security: ['Web Security', 'Penetration Testing', 'CTF', 'Network Security'],
+  design: ['After Effects', 'Premiere Pro', 'Photoshop', 'Illustrator', 'Figma', 'UI/UX Design']
+};
+
+// Experience data
+const experiences = [
+  {
+    position: 'Senior Web Developer',
+    company: 'TechCorp Indonesia',
+    period: '2023 - Present',
+    description: 'Lead front-end developer working on enterprise web applications with React and TypeScript.'
+  },
+  {
+    position: 'Motion Designer',
+    company: 'Creative Studio Jakarta',
+    period: '2022 - 2023',
+    description: 'Created motion graphics and animations for clients in advertising and media industries.'
+  },
+  {
+    position: 'CTF Team Captain',
+    company: 'CyberSec Community',
+    period: '2021 - Present',
+    description: 'Lead a team in various CTF competitions, focusing on web security challenges.'
+  },
+  {
+    position: 'Web Developer Intern',
+    company: 'StartUp Hub',
+    period: '2020 - 2021',
+    description: 'Developed responsive websites and web applications for early-stage startups.'
+  }
+];
+
+// Education data
+const education = [
+  {
+    degree: 'Bachelor of Computer Science',
+    institution: 'University of Indonesia',
+    period: '2018 - 2022',
+    description: 'Specialized in Information Security and Web Development.'
+  },
+  {
+    degree: 'Motion Graphics Certification',
+    institution: 'Design Academy Jakarta',
+    period: '2021',
+    description: 'Comprehensive program focusing on animation principles and motion design.'
+  }
+];
 ---
 
-<Layout
-	title="About Me"
-	description="Lorem ipsum dolor sit amet"
-	pubDate={new Date('August 08 2021')}
-	heroImage="/blog-placeholder-about.jpg"
->
-	<p>
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
-		labore et dolore magna aliqua. Vitae ultricies leo integer malesuada nunc vel risus commodo
-		viverra. Adipiscing enim eu turpis egestas pretium. Euismod elementum nisi quis eleifend quam
-		adipiscing. In hac habitasse platea dictumst vestibulum. Sagittis purus sit amet volutpat. Netus
-		et malesuada fames ac turpis egestas. Eget magna fermentum iaculis eu non diam phasellus
-		vestibulum lorem. Varius sit amet mattis vulputate enim. Habitasse platea dictumst quisque
-		sagittis. Integer quis auctor elit sed vulputate mi. Dictumst quisque sagittis purus sit amet.
-	</p>
+<MainLayout title="Gafnaa - About">
+  <div class="about-container">
+    <h1>About Me</h1>
+    
+    <section class="about-section">
+      <p>
+        Hi there! I'm Gafna Al Faatiha Prabowo, a web developer, CTF player, and motion designer based in Jakarta, Indonesia. 
+        I'm passionate about creating elegant web solutions, exploring cybersecurity challenges, and crafting engaging motion graphics.
+      </p>
+      <p>
+        With experience in both front-end and back-end development, I enjoy building complete web applications 
+        from concept to deployment. My background in motion design allows me to bring a unique perspective to 
+        user experience and interface design.
+      </p>
+      <p>
+        When I'm not coding or designing, you can find me participating in CTF competitions, 
+        where I specialize in web security challenges and forensics.
+      </p>
+    </section>
+    
+    <section class="skills-section">
+      <h2>Skills</h2>
+      
+      <div class="skills-grid">
+        <div class="skill-category">
+          <h3>Front-End</h3>
+          <div class="skill-tags">
+            {skills.frontend.map(skill => (
+              <span class="skill-tag">{skill}</span>
+            ))}
+          </div>
+        </div>
+        
+        <div class="skill-category">
+          <h3>Back-End</h3>
+          <div class="skill-tags">
+            {skills.backend.map(skill => (
+              <span class="skill-tag">{skill}</span>
+            ))}
+          </div>
+        </div>
+        
+        <div class="skill-category">
+          <h3>Security</h3>
+          <div class="skill-tags">
+            {skills.security.map(skill => (
+              <span class="skill-tag">{skill}</span>
+            ))}
+          </div>
+        </div>
+        
+        <div class="skill-category">
+          <h3>Design</h3>
+          <div class="skill-tags">
+            {skills.design.map(skill => (
+              <span class="skill-tag">{skill}</span>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <section class="experience-section">
+      <h2>Experience</h2>
+      
+      <div class="timeline">
+        {experiences.map(exp => (
+          <div class="timeline-item">
+            <div class="timeline-content">
+              <h3>{exp.position}</h3>
+              <div class="timeline-meta">
+                <span class="company">{exp.company}</span>
+                <span class="period">{exp.period}</span>
+              </div>
+              <p>{exp.description}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+    
+    <section class="education-section">
+      <h2>Education</h2>
+      
+      <div class="timeline">
+        {education.map(edu => (
+          <div class="timeline-item">
+            <div class="timeline-content">
+              <h3>{edu.degree}</h3>
+              <div class="timeline-meta">
+                <span class="institution">{edu.institution}</span>
+                <span class="period">{edu.period}</span>
+              </div>
+              <p>{edu.description}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </section>
+    
+    <section class="contact-section">
+      <h2>Contact</h2>
+      <p>Feel free to reach out to me via email or social media.</p>
+      
+      <div class="contact-links">
+        <a href="mailto:hello@gafnaa.com" class="contact-link">
+          hello@gafnaa.com
+        </a>
+        <div class="social-links">
+          <a href="https://linkedin.com" target="_blank" rel="noopener noreferrer">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z"></path>
+              <rect x="2" y="9" width="4" height="12"></rect>
+              <circle cx="4" cy="4" r="2"></circle>
+            </svg>
+          </a>
+          <a href="https://github.com" target="_blank" rel="noopener noreferrer">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path>
+            </svg>
+          </a>
+          <a href="https://instagram.com" target="_blank" rel="noopener noreferrer">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+              <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+              <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+            </svg>
+          </a>
+        </div>
+      </div>
+    </section>
+  </div>
+</MainLayout>
 
-	<p>
-		Morbi tristique senectus et netus. Id semper risus in hendrerit gravida rutrum quisque non
-		tellus. Habitasse platea dictumst quisque sagittis purus sit amet. Tellus molestie nunc non
-		blandit massa. Cursus vitae congue mauris rhoncus. Accumsan tortor posuere ac ut. Fringilla urna
-		porttitor rhoncus dolor. Elit ullamcorper dignissim cras tincidunt lobortis. In cursus turpis
-		massa tincidunt dui ut ornare lectus. Integer feugiat scelerisque varius morbi enim nunc.
-		Bibendum neque egestas congue quisque egestas diam. Cras ornare arcu dui vivamus arcu felis
-		bibendum. Dignissim suspendisse in est ante in nibh mauris. Sed tempus urna et pharetra pharetra
-		massa massa ultricies mi.
-	</p>
-
-	<p>
-		Mollis nunc sed id semper risus in. Convallis a cras semper auctor neque. Diam sit amet nisl
-		suscipit. Lacus viverra vitae congue eu consequat ac felis donec. Egestas integer eget aliquet
-		nibh praesent tristique magna sit amet. Eget magna fermentum iaculis eu non diam. In vitae
-		turpis massa sed elementum. Tristique et egestas quis ipsum suspendisse ultrices. Eget lorem
-		dolor sed viverra ipsum. Vel turpis nunc eget lorem dolor sed viverra. Posuere ac ut consequat
-		semper viverra nam. Laoreet suspendisse interdum consectetur libero id faucibus. Diam phasellus
-		vestibulum lorem sed risus ultricies tristique. Rhoncus dolor purus non enim praesent elementum
-		facilisis. Ultrices tincidunt arcu non sodales neque. Tempus egestas sed sed risus pretium quam
-		vulputate. Viverra suspendisse potenti nullam ac tortor vitae purus faucibus ornare. Fringilla
-		urna porttitor rhoncus dolor purus non. Amet dictum sit amet justo donec enim.
-	</p>
-
-	<p>
-		Mattis ullamcorper velit sed ullamcorper morbi tincidunt. Tortor posuere ac ut consequat semper
-		viverra. Tellus mauris a diam maecenas sed enim ut sem viverra. Venenatis urna cursus eget nunc
-		scelerisque viverra mauris in. Arcu ac tortor dignissim convallis aenean et tortor at. Curabitur
-		gravida arcu ac tortor dignissim convallis aenean et tortor. Egestas tellus rutrum tellus
-		pellentesque eu. Fusce ut placerat orci nulla pellentesque dignissim enim sit amet. Ut enim
-		blandit volutpat maecenas volutpat blandit aliquam etiam. Id donec ultrices tincidunt arcu. Id
-		cursus metus aliquam eleifend mi.
-	</p>
-
-	<p>
-		Tempus quam pellentesque nec nam aliquam sem. Risus at ultrices mi tempus imperdiet. Id porta
-		nibh venenatis cras sed felis eget velit. Ipsum a arcu cursus vitae. Facilisis magna etiam
-		tempor orci eu lobortis elementum. Tincidunt dui ut ornare lectus sit. Quisque non tellus orci
-		ac. Blandit libero volutpat sed cras. Nec tincidunt praesent semper feugiat nibh sed pulvinar
-		proin gravida. Egestas integer eget aliquet nibh praesent tristique magna.
-	</p>
-</Layout>
+<style>
+  .about-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+  
+  h1 {
+    font-size: 2rem;
+    margin-bottom: 1.5rem;
+  }
+  
+  h2 {
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    color: var(--accent-color);
+  }
+  
+  section {
+    margin-bottom: 3rem;
+  }
+  
+  .about-section p {
+    margin-bottom: 1rem;
+    line-height: 1.7;
+    opacity: 0.9;
+  }
+  
+  .skills-grid {
+    display: grid;
+    gap: 2rem;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  }
+  
+  .skill-category h3 {
+    margin-bottom: 1rem;
+    font-size: 1.2rem;
+  }
+  
+  .skill-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+  
+  .skill-tag {
+    font-size: 0.8rem;
+    padding: 0.25rem 0.75rem;
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 50px;
+  }
+  
+  .timeline-item {
+    margin-bottom: 1.5rem;
+    padding-left: 1.5rem;
+    border-left: 2px solid var(--accent-color);
+    position: relative;
+  }
+  
+  .timeline-item::before {
+    content: '';
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    background-color: var(--accent-color);
+    border-radius: 50%;
+    left: -7px;
+    top: 6px;
+  }
+  
+  .timeline-content h3 {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .timeline-meta {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+    opacity: 0.7;
+    font-size: 0.9rem;
+  }
+  
+  .contact-section p {
+    margin-bottom: 1rem;
+  }
+  
+  .contact-links {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .contact-link {
+    color: var(--accent-color);
+    font-size: 1.1rem;
+  }
+  
+  .social-links {
+    display: flex;
+    gap: 1rem;
+  }
+  
+  .social-links a {
+    color: var(--text-color);
+    transition: color 0.2s ease;
+  }
+  
+  .social-links a:hover {
+    color: var(--accent-color);
+  }
+</style>
