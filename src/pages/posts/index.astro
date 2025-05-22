@@ -2,7 +2,6 @@
 import MainLayout from '../../layouts/MainLayout.astro';
 import PostCard from '../../components/PostCard.astro';
 
-// Demo posts data (in a real project, you might fetch this from a CMS or markdown files)
 const posts = [
   {
     title: 'IFEST13 CTF UAJY 2025 - Writeup',
@@ -12,52 +11,69 @@ const posts = [
     url: '/posts/ifest13-ctf-writeup'
   },
   {
-    title: 'IFEST13 CTF UAJY 2025 - Writeup',
-    date: '11 Mei 2025',
-    time: '09:00 PM',
-    excerpt: 'team no fasilkom no worries',
-    url: '/posts/ifest13-ctf-writeup'
+    title: 'CySec Notes - Week 1',
+    date: '5 Mei 2025',
+    time: '07:30 PM',
+    excerpt: 'basic overview tentang threat modeling',
+    url: '/posts/cysec-notes-week1'
   },
   {
-    title: 'IFEST13 CTF UAJY 2025 - Writeup',
-    date: '11 Mei 2025',
-    time: '09:00 PM',
-    excerpt: 'team no fasilkom no worries',
-    url: '/posts/ifest13-ctf-writeup'
+    title: 'Frontend Tips - React & Astro',
+    date: '1 Mei 2025',
+    time: '02:00 PM',
+    excerpt: 'beberapa tips dan trik frontend ringan',
+    url: '/posts/frontend-tips'
   },
-  {
-    title: 'IFEST13 CTF UAJY 2025 - Writeup',
-    date: '11 Mei 2025',
-    time: '09:00 PM',
-    excerpt: 'team no fasilkom no worries',
-    url: '/posts/ifest13-ctf-writeup'
-  },
-  {
-    title: 'IFEST13 CTF UAJY 2025 - Writeup',
-    date: '11 Mei 2025',
-    time: '09:00 PM',
-    excerpt: 'team no fasilkom no worries',
-    url: '/posts/ifest13-ctf-writeup'
-  }
 ];
 ---
 
 <MainLayout title="Gafnaa - Posts">
   <div class="posts-container">
     <h1>All Posts</h1>
-    
-    <div class="posts-grid">
-      {posts.map(post => (
-        <PostCard 
-          title={post.title}
-          date={post.date}
-          time={post.time}
-          excerpt={post.excerpt}
-          url={post.url}
-        />
+
+    <input
+      type="text"
+      id="searchInput"
+      placeholder="Search posts..."
+      class="search-bar"
+    />
+
+    <div class="posts-grid" id="postsGrid">
+      {posts.map((post, index) => (
+        <div class="post-wrapper" data-title={post.title.toLowerCase()} data-excerpt={post.excerpt.toLowerCase()}>
+          <PostCard 
+            title={post.title}
+            date={post.date}
+            time={post.time}
+            excerpt={post.excerpt}
+            url={post.url}
+          />
+        </div>
       ))}
     </div>
   </div>
+
+  <script type="text/javascript">
+    document.addEventListener('DOMContentLoaded', () => {
+      const searchInput = document.getElementById('searchInput');
+      const posts = document.querySelectorAll('.post-wrapper');
+
+      searchInput.addEventListener('input', () => {
+        const query = searchInput.value.toLowerCase();
+
+        posts.forEach(post => {
+          const title = post.dataset.title;
+          const excerpt = post.dataset.excerpt;
+
+          if (title.includes(query) || excerpt.includes(query)) {
+            post.style.display = 'block';
+          } else {
+            post.style.display = 'none';
+          }
+        });
+      });
+    });
+  </script>
 </MainLayout>
 
 <style>
@@ -65,14 +81,29 @@ const posts = [
     max-width: 800px;
     margin: 0 auto;
   }
-  
+
   h1 {
     font-size: 2rem;
-    margin-bottom: 2rem;
+    margin-bottom: 1.5rem;
   }
-  
+
+  .search-bar {
+    width: 100%;
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+    margin-bottom: 2rem;
+    background-color: var(--border-color);
+    color: var(--text-color);
+  }
+
   .posts-grid {
     display: grid;
     gap: 2rem;
+  }
+
+  .post-wrapper {
+    transition: all 0.3s ease-in-out;
   }
 </style>
