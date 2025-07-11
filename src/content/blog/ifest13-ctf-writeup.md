@@ -1,8 +1,7 @@
 ---
 title: "IFEST13 CTF UAJY 2025 - Writeup"
-date: 2025-05-11
-time: "09:00 PM"
-excerpt: "team no fasilkom no worries"
+description: "team no fasilkom no worries"
+pubDate: 2025-05-11 21:00
 slug: "ifest13-ctf-writeup"
 ---
 
@@ -10,4 +9,4 @@ slug: "ifest13-ctf-writeup"
 
 ## Team no fasilkom no worries
 
-## 
+##
