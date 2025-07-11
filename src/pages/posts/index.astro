@@ -1,33 +1,19 @@
 ---
 import MainLayout from '../../layouts/MainLayout.astro';
 import PostCard from '../../components/PostCard.astro';
+import { getCollection, type CollectionEntry } from 'astro:content';
 
-const posts = [
-  {
-    title: 'IFEST13 CTF UAJY 2025 - Writeup',
-    date: '11 Mei 2025',
-    time: '09:00 PM',
-    excerpt: 'team no fasilkom no worries',
-    url: '/posts/ifest13-ctf-writeup'
-  },
-  {
-    title: 'CySec Notes - Week 1',
-    date: '5 Mei 2025',
-    time: '07:30 PM',
-    excerpt: 'basic overview tentang threat modeling',
-    url: '/posts/cysec-notes-week1'
-  },
-  {
-    title: 'Frontend Tips - React & Astro',
-    date: '1 Mei 2025',
-    time: '02:00 PM',
-    excerpt: 'beberapa tips dan trik frontend ringan',
-    url: '/posts/frontend-tips'
-  },
-];
+const posts: CollectionEntry<'blog'>[] = (await getCollection('blog')).sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
 ---
 
-<MainLayout title="Gafnaa - Posts">
+<MainLayout 
+  title="Gafnaa - Posts" 
+  description="Browse through all blog posts by Gafna Al Faatiha Prabowo, covering topics like CTF writeups, cybersecurity notes, and frontend development tips."
+  image="/sankya.jpg"
+  url="/posts"
+>
   <div class="posts-container">
     <h1>All Posts</h1>
 
@@ -39,14 +25,13 @@ const posts = [
     />
 
     <div class="posts-grid" id="postsGrid">
-      {posts.map((post, index) => (
-        <div class="post-wrapper" data-title={post.title.toLowerCase()} data-excerpt={post.excerpt.toLowerCase()}>
+      {posts.map((post) => (
+        <div class="post-wrapper" data-title={post.data.title.toLowerCase()} data-excerpt={post.data.description.toLowerCase()}>
           <PostCard 
-            title={post.title}
-            date={post.date}
-            time={post.time}
-            excerpt={post.excerpt}
-            url={post.url}
+            title={post.data.title}
+            date={post.data.pubDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+            excerpt={post.data.description}
+            url={`/posts/${post.id.replace(/\.mdx?$/, '')}`}
           />
         </div>
       ))}
