@@ -5,8 +5,8 @@ import MainLayout from '../../layouts/MainLayout.astro';
 import { SITE_TITLE } from '../../consts';
 
 export async function getStaticPaths() {
-  const posts = await getCollection('blog');
-  return posts.map((post) => ({
+  const posts: CollectionEntry<'blog'>[] = await getCollection('blog');
+  return posts.map((post: CollectionEntry<'blog'>) => ({
     params: { slug: post.id.replace(/\.mdx?$/, '') },
     props: { post },
   }));
@@ -15,7 +15,7 @@ export async function getStaticPaths() {
 type Props = { post: CollectionEntry<'blog'> };
 
 const { post } = Astro.props;
-const { Content } = await post.render();
+const { Content } = await (post as any).render();
 ---
 
 <MainLayout title={`${post.data.title} | ${SITE_TITLE}`} description={post.data.description} image={post.data.heroImage} url={`/posts/${post.id.replace(/\.mdx?$/, '')}`}>
