@@ -3,6 +3,7 @@ import MainLayout from '../layouts/MainLayout.astro';
 import ProfileSection from '../components/ProfileSection.astro';
 import PostCard from '../components/PostCard.astro';
 import Button from '../components/Button.astro';
+import { SITE_DESCRIPTION } from '../consts';
 
 // Demo posts data (in a real project, you might fetch this from a CMS or markdown files)
 const posts = [
@@ -30,7 +31,12 @@ const posts = [
 ];
 ---
 
-<MainLayout title="Gafnaa - Home">
+<MainLayout 
+  title="Gafnaa - Home" 
+  description={SITE_DESCRIPTION} 
+  image="/sankya.jpg" 
+  url="/"
+>
   <ProfileSection />
   
   <div class="bio-section">
