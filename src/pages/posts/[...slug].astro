@@ -1,47 +1,41 @@
 ---
-import type { CollectionEntry } from 'astro:content';
-import { getCollection, getEntry } from 'astro:content';
+import { getCollection } from 'astro:content';
 import MainLayout from '../../layouts/MainLayout.astro';
 import { SITE_TITLE } from '../../consts';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
   return posts.map((post) => ({
-    params: { slug: post.id },
-    props: { id: post.id },
+    params: { slug: post.slug }, // This will now work
+    props: post,
   }));
 }
 
-const { id } = Astro.props;
-const entry = await getEntry('blog', id);
-if (!entry) {
-  return new Response(null, {
-    status: 404,
-    statusText: 'Not found'
-  });
-}
+const post = Astro.props;
+const { Content } = await post.render(); // This will also work now
 ---
 
 <MainLayout 
-  title={`${entry.data.title} | ${SITE_TITLE}`} 
-  description={entry.data.description} 
-  image={entry.data.heroImage} 
-  url={`/posts/${entry.id}`}
+  title={`${post.data.title} | ${SITE_TITLE}`} 
+  description={post.data.description} 
+  image={post.data.heroImage} 
+  url={`/posts/${post.slug}`}
 >
   <article>
     <div class="hero-image">
-      {entry.data.heroImage && <img src={entry.data.heroImage} alt={entry.data.title} />}
+      {post.data.heroImage && <img src={post.data.heroImage} alt={post.data.title} />}
     </div>
-    <h1 class="title">{entry.data.title}</h1>
+    <h1 class="title">{post.data.title}</h1>
     <p class="date">
-      {entry.data.pubDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+      {post.data.pubDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
     </p>
 
-    <div set:html={entry.body} />
+    <Content />
   </article>
 </MainLayout>
 
 <style>
+  /* Semua style kamu tetap sama */
   .hero-image {
     width: 100%;
     height: 300px;

@@ -4,7 +4,8 @@ const blog = defineCollection({
   schema: z.object({
     title: z.string(),
     description: z.string(),
-    pubDate: z.date(), // ubah ini jadi z.string() kalau pubDate kamu belum berbentuk Date
+    // Gunakan z.coerce.date() untuk mengubah string menjadi Date secara otomatis
+    pubDate: z.coerce.date(), 
     slug: z.string().optional(),
     heroImage: z.string().optional(),
   }),

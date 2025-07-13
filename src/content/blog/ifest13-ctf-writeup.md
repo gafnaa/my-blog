@@ -16,11 +16,13 @@ slug: "ifest13-ctf-writeup"
 - [WEB](#web)
 - [REV](#rev)
 
----
 
 ## WELCOME
 
-### Flag: IFEST13{JANGAN_LUPA_BERDOA_SESUAI_KEYAKINAN_MASING_MASING}
+### Flag:
+``` 
+IFEST13{JANGAN_LUPA_BERDOA_SESUAI_KEYAKINAN_MASING_MASING}
+```
 
 ## CRYPTO
 ### Brute (340 Pts)
@@ -77,7 +79,10 @@ if n % p == 0:
 
 Btw aku make conda & sage env, lama bgt installnya, anyway, outputnya tinggal di-wrap ke format flag.
 
-### Flag: IFEST13{happy_brute__as_long_as_possible_lol_it_wont_be_the_flag_isnt_it?}
+### Flag:
+``` 
+IFEST13{happy_brute__as_long_as_possible_lol_it_wont_be_the_flag_isnt_it?}
+```
 
 ## Forensics
 ### Ququerer (250 Pts)
@@ -131,9 +136,6 @@ for i in imgs:
 canvas.save('tez.png')
 ```
 
-Script tersebut menghasilkan gambar berikut:
-
-![Distorted QR Code](https://i.imgur.com/example2.png)
 
 Hmmm, tidak bisa di-scan. Gambarnya yang agak lonjong membuat saya curiga, setelah melihatnya dengan seksama, ternyata setiap fragment gambarnya double, jadi increment iterasinya saya naikkan menjadi 2, dengan script berikut:
 
@@ -176,7 +178,10 @@ canvas.save('tez.png')
 
 Dan benar saja qr code nya tidak lonjong lagi dan dapat di-scan.
 
-### Flag: IFEST13{M4ST3R_R3CONSTRUCT0R_PACK3T}
+### Flag: 
+```
+IFEST13{M4ST3R_R3CONSTRUCT0R_PACK3T}
+```
 
 ## WEB
 ### Web V 1 (280 Pts)
@@ -231,7 +236,10 @@ if 'daffainfo.com' not in url:
 ```
 Ternyata dalam url yang ingin di-fetch harus ada `daffainfo.com`, jadi kita bisa kasi payload `http://daffainfo.com@127.0.0.1:1337/internal`, di mana si dafa sebagai userinfo dan bakalan di-ignore buat DNS resolution.
 
-### Flag: IFEST13{4b0a3c7d05927b28970fdfffe803e7fb}
+### Flag: 
+```
+IFEST13{4b0a3c7d05927b28970fdfffe803e7fb}
+```
 
 ### Orbiter (480 Pts)
 
@@ -296,7 +304,10 @@ Melihat pola ini, kami mengasumsikan bahwa part 2 kemungkinan berupa kata sandi 
 
 Meskipun bagian tengah (`L3M0N`) didapat melalui asumsi, kami memutuskan untuk mencobanya terlebih dahulu. Ternyata, setelah melakukan submit, flag tersebut berhasil diterima sebagai jawaban yang benar.
 
-### Flag: IFEST13{345Y_P34SY_L3M0N_5QU332Y}
+### Flag: 
+```
+IFEST13{345Y_P34SY_L3M0N_5QU332Y}
+```
 
 ## REV
 ### free flag (280 Pts)
@@ -361,4 +372,7 @@ for i in range(count):
 print(flag)
 ```
 
-### Flag: IFEST13{w3ll_n07h1n9_1z_fr33_1n_l1f3_s0_7h15_1z_n07_s0_fr33_4f73r_4ll}
+### Flag: 
+```
+IFEST13{w3ll_n07h1n9_1z_fr33_1n_l1f3_s0_7h15_1z_n07_s0_fr33_4f73r_4ll}
+```
