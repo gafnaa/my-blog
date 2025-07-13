@@ -1,21 +1,17 @@
 ---
-title: "IFEST13 CTF UAJY 2025 - Writeup"
+title: "IFEST13 CTF UAJY 2025 QUALS - Writeup"
 description: "team no fasilkom no worries"
 pubDate: 2025-05-11 21:00
 slug: "ifest13-ctf-writeup"
 ---
 
-# IFEST13 CTF UAJY 2025 - Writeup
+## team : no fasilkom no worries
 
-## Team no fasilkom no worries
-
-## Table of Contents
 - [WELCOME](#welcome)
 - [CRYPTO](#crypto)
 - [Forensics](#forensics)
 - [WEB](#web)
 - [REV](#rev)
-
 
 ## WELCOME
 
@@ -359,7 +355,7 @@ with open('original', 'rb') as f:
     data = f.read()
 
 vaddr = 0x402360
-file_offset = data.find(b'\x46\x49\x00\x00') # Bisa diganti hardcoded offset langsung
+file_offset = data.find(b'\x46\x49\x00\x00')
 count = 35
 flag = ""
 

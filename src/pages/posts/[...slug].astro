@@ -59,13 +59,12 @@ const { Content } = await post.render(); // This will also work now
   .date {
     font-size: 0.9rem;
     opacity: 0.7;
-    margin-bottom: 2rem;
+    margin-bottom: 1rem;
   }
 
   article {
-    max-width: 800px;
-    margin: 0 auto;
-    padding: 0 1rem;
+    max-width: 100%;
+    padding: 0 0.5rem;
   }
 
   article :global(h1),
@@ -74,7 +73,7 @@ const { Content } = await post.render(); // This will also work now
   article :global(h4),
   article :global(h5),
   article :global(h6) {
-    margin-top: 2rem;
+    margin-top: 0;
     margin-bottom: 1rem;
     line-height: 1.3;
   }
