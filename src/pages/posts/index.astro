@@ -26,7 +26,7 @@ const posts: CollectionEntry<'blog'>[] = (await getCollection('blog')).sort(
 
     <div class="posts-grid" id="postsGrid">
       {posts.map((post) => (
-        <div class="post-wrapper" data-title={post.data.title.toLowerCase()} data-excerpt={post.data.description.toLowerCase()}>
+<div class="post-wrapper" data-title={post.data.title.toLowerCase()} data-excerpt={post.data.description.toLowerCase()} data-slug={post.id.replace(/\.mdx?$/, '').toLowerCase()}>
           <PostCard 
             title={post.data.title}
             date={post.data.pubDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
@@ -49,8 +49,9 @@ const posts: CollectionEntry<'blog'>[] = (await getCollection('blog')).sort(
         posts.forEach(post => {
           const title = post.dataset.title;
           const excerpt = post.dataset.excerpt;
+          const slug = post.dataset.slug;
 
-          if (title.includes(query) || excerpt.includes(query)) {
+          if (title.includes(query) || excerpt.includes(query) || slug.includes(query)) {
             post.style.display = 'block';
           } else {
             post.style.display = 'none';
