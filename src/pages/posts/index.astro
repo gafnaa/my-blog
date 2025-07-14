@@ -19,12 +19,12 @@ const posts: CollectionEntry<'blog'>[] = (await getCollection('blog')).sort(
 
     <input
       type="text"
-      id="searchInput"
+      id="search-input"
       placeholder="Search posts..."
       class="search-bar"
     />
 
-    <div class="posts-grid" id="postsGrid">
+    <div class="posts-grid" id="posts-container">
       {posts.map((post) => (
         <div class="post-wrapper" data-title={post.data.title.toLowerCase()} data-excerpt={post.data.description.toLowerCase()} data-slug={post.id.replace(/\.mdx?$/, '').toLowerCase()}>
           <PostCard 
@@ -36,42 +36,9 @@ const posts: CollectionEntry<'blog'>[] = (await getCollection('blog')).sort(
         </div>
       ))}
     </div>
-    <p id="no-results" class="no-results-message" style="display: none;">No posts found.</p>
+    <p id="no-results" class="no-results-message hidden">No posts found.</p>
   </div>
 
-  <!-- 
-  <script type="text/javascript">
-    document.addEventListener('DOMContentLoaded', () => {
-      const searchInput = document.getElementById('searchInput');
-      const posts = document.querySelectorAll('.post-wrapper');
-      const noResultsMessage = document.getElementById('no-results');
-
-      searchInput.addEventListener('input', () => {
-        const query = searchInput.value.toLowerCase();
-        let hasResults = false;
-
-        posts.forEach(post => {
-          const title = post.dataset.title;
-          const excerpt = post.dataset.excerpt;
-          const slug = post.dataset.slug;
-
-          if (title.includes(query) || excerpt.includes(query) || slug.includes(query)) {
-            post.style.display = 'block';
-            hasResults = true;
-          } else {
-            post.style.display = 'none';
-          }
-        });
-
-        if (hasResults) {
-          noResultsMessage.style.display = 'none';
-        } else {
-          noResultsMessage.style.display = 'block';
-        }
-      });
-    });
-  </script>
-  -->
 </MainLayout>
 
 <script src="../../scripts/search.js"></script>
