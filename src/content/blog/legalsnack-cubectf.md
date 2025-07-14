@@ -2,7 +2,7 @@
 title: "Legal Snack - CubeCTF 2025"
 description: ""
 pubDate: 2025-07-14 10:00
-slug: "cubectf2025-legalsnack"
+slug: "legalsnack-cubectf"
 ---
 
 ## Legal Snack
