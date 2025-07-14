@@ -26,7 +26,7 @@ const posts: CollectionEntry<'blog'>[] = (await getCollection('blog')).sort(
 
     <div class="posts-grid" id="postsGrid">
       {posts.map((post) => (
-<div class="post-wrapper" data-title={post.data.title.toLowerCase()} data-excerpt={post.data.description.toLowerCase()} data-slug={post.id.replace(/\.mdx?$/, '').toLowerCase()}>
+        <div class="post-wrapper" data-title={post.data.title.toLowerCase()} data-excerpt={post.data.description.toLowerCase()} data-slug={post.id.replace(/\.mdx?$/, '').toLowerCase()}>
           <PostCard 
             title={post.data.title}
             date={post.data.pubDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
@@ -36,15 +36,19 @@ const posts: CollectionEntry<'blog'>[] = (await getCollection('blog')).sort(
         </div>
       ))}
     </div>
+    <p id="no-results" class="no-results-message" style="display: none;">No posts found.</p>
   </div>
 
+  <!-- 
   <script type="text/javascript">
     document.addEventListener('DOMContentLoaded', () => {
       const searchInput = document.getElementById('searchInput');
       const posts = document.querySelectorAll('.post-wrapper');
+      const noResultsMessage = document.getElementById('no-results');
 
       searchInput.addEventListener('input', () => {
         const query = searchInput.value.toLowerCase();
+        let hasResults = false;
 
         posts.forEach(post => {
           const title = post.dataset.title;
@@ -53,14 +57,24 @@ const posts: CollectionEntry<'blog'>[] = (await getCollection('blog')).sort(
 
           if (title.includes(query) || excerpt.includes(query) || slug.includes(query)) {
             post.style.display = 'block';
+            hasResults = true;
           } else {
             post.style.display = 'none';
           }
         });
+
+        if (hasResults) {
+          noResultsMessage.style.display = 'none';
+        } else {
+          noResultsMessage.style.display = 'block';
+        }
       });
     });
   </script>
+  -->
 </MainLayout>
+
+<script src="../../scripts/search.js"></script>
 
 <style>
   .posts-container {
@@ -77,11 +91,19 @@ const posts: CollectionEntry<'blog'>[] = (await getCollection('blog')).sort(
     width: 100%;
     padding: 0.5rem 1rem;
     font-size: 1rem;
-    border: 1px solid var(--border-color);
+    border: 1px solid var(--divider-color);
     border-radius: 0.5rem;
     margin-bottom: 2rem;
-    background-color: var(--border-color);
+    background-color: #0A0A10;
     color: var(--text-color);
+    transition: border-color 0.2s;
+    border-color: rgba(255, 255, 255, 0.5); /* putih dengan 50% opacity */
+
+  }
+
+  .search-bar:focus {
+    outline: none;
+    border-color: var(--accent-color);
   }
 
   .posts-grid {
@@ -91,5 +113,12 @@ const posts: CollectionEntry<'blog'>[] = (await getCollection('blog')).sort(
 
   .post-wrapper {
     transition: all 0.3s ease-in-out;
+  }
+  
+  .no-results-message {
+    text-align: center;
+    margin-top: 2rem;
+    color: var(--text-color);
+    opacity: 0.7;
   }
 </style>
