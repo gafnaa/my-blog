@@ -59,7 +59,7 @@ const videos = [
   <div class="projects-container">
     <h1>Projects</h1>
     <p class="intro">Some projects that I have made as a web developer and motion designer</p>
-    <div style="height: 1px; background-color: white; margin-bottom: 2rem;"></div>
+    
     <h2>Web</h2>
     <p class="intro">also you can check my github for many other project</p>
     
@@ -80,8 +80,12 @@ const videos = [
       ))}
     </div>
 
+    <!-- 
+    <div style="height: 1px; background-color: white; margin-bottom: 2rem;"></div>
+    -->
+
     <h2 style="margin-top: 4rem;">Video</h2>
-    <p class="intro">A selection of motion graphics and video projects.</p>
+    <p class="intro">A selection of motion graphics and video projects. For more videos, you can check <a href="https://gafworks.carrd.co/">here</a></p>
 
     <div class="videos-grid">
       {videos.map(video => (
@@ -114,7 +118,17 @@ const videos = [
 
   h2 {
     font-size: 1.5rem;
-    color: white; /* Changed color to white */
+    color: var(--accent-color); /* Changed color to white */
+  }
+
+  a {
+    color: var(--accent-color);
+    text-decoration: none;
+  }
+
+  a:hover {
+    color: white;
+    opacity: 0.8;
   }
   
   .intro {
@@ -125,18 +139,19 @@ const videos = [
   .projects-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr); /* Explicitly 2 columns */
-    gap: 2rem;
+    gap: 2.5rem;
   }
   
   .project-card {
-    border-radius: 12px;
+    border-radius: 15px;
     overflow: hidden;
     background-color: #1a1a1a;
     transition: transform 0.3s ease;
-    width: 524px; /* Set fixed width */
+    width: 520px; /* Set fixed width */
     height: 220px; /* Increased height */
     display: flex; /* Use flexbox to control internal layout */
     flex-direction: column;
+    width: 100%;
   }
   
   .project-card:hover {
