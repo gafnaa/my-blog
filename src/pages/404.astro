@@ -4,8 +4,19 @@ import MainLayout from '../layouts/MainLayout.astro';
 
 <MainLayout title="404 Not Found">
   <section class="flex flex-col items-center justify-center min-h-[calc(100vh-8rem)] text-center">
-    <h1 class="text-6xl font-bold text-primary-dark dark:text-primary-light mb-4">404</h1>
+    <h1 class="text-6xl font-bold text-primary-dark dark:text-primary-light mb-2">404</h1>
     <p class="text-xl text-text-dark dark:text-text-light mb-8">Oops! Halaman yang Anda cari tidak ditemukan.</p>
-    <a href="/" class="inline-block bg-accent-light text-white px-6 py-3 rounded-lg hover:bg-accent-dark transition-colors duration-300">Kembali ke Beranda</a>
+    <a href="/" class="inline-block bg-accent-light text-white px-6 py-1 rounded-lg hover:bg-accent-dark transition-colors duration-300">Kembali ke Beranda</a>
   </section>
 </MainLayout>
+
+<style>
+
+a {
+    color: var(--accent-color);
+    text-decoration: none;
+    transition: color 0.3s ease;
+    margin-top: -10px;
+    }
+
+</style>
