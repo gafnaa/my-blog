@@ -2,7 +2,7 @@
 title: "Liga Komatik 2025 - Writeup"
 description: ""
 pubDate: 2025-07-13 21:00
-slug: "ligakomatik-writeup"
+slug: "ligakomatik-wu"
 ---
 
 ## team : Satpam Digital
