@@ -10,8 +10,7 @@ slug: "ligakomatik-wu"
 - [Web](#web)
 - [Rev](#rev)
 - [Foren](#foren)
-- [STEGANO](#stegano)
-- [MISC](#misc)
+- [Pwn](#pwn)
 
 ## Web
 
@@ -125,4 +124,144 @@ Penjelasan dari kode tersebut:
 ### Flag
 ```
 LK25{remov1ng_symb0l_table5_is_4_comm0n_rev_tr1ck}
+```
+
+### XOR
+
+<img width="361" height="275" alt="image" src="https://github.com/user-attachments/assets/d2005a0a-18d4-4280-b1d7-e9af5a00ebde" />
+
+Kita diberikan sebuah file binary (xor) yang meminta input
+
+<img width="542" height="108" alt="image" src="https://github.com/user-attachments/assets/014bea7c-4e17-4ff1-9a70-e9575223b669" />
+
+Kemudian, kita membuka program tersebut menggunakan Ghidra untuk melakukan proses
+dekompilasi. Didapatkan fungsi berikut:
+
+<img width="490" height="398" alt="image" src="https://github.com/user-attachments/assets/7a6d4bb2-73ef-4f7f-acfc-4474497a4128" />
+<img width="551" height="575" alt="image" src="https://github.com/user-attachments/assets/db5435d3-d0ff-499a-a3c9-3f151aa0186e" />
+
+
+Analisis program:
+- Terdapat sebuah string panjang berisi karakter acak:
+"asdghkashdfclkamsdfjalxsdkjfxhcaksvjnalsckuqpoiewt"
+- Program memilih beberapa karakter dari string tersebut dengan pola tertentu, lalu
+menyimpannya ke dalam variabel local_148. Karakter-karakter ini nantinya akan
+digunakan sebagai hasil pembanding akhir.
+- Password yang dimasukkan pengguna akan di-XOR satu per satu dengan nilai dari array
+local_e8. Hasilnya kemudian disimpan di variabel local_108.
+- Program akan membandingkan local_108 (hasil XOR dari input) dengan local_148. Jika
+sama, berarti password benar.
+
+Karena kita tahu hasil akhirnya (local_148) dan kunci XOR-nya (local_e8), maka kita bisa
+membalik prosesnya. Berikut program yang kita buat untuk membantu.
+
+<img width="556" height="214" alt="image" src="https://github.com/user-attachments/assets/e5ef9157-6f37-4d00-a2cb-7d12a5994220" />
+
+
+Dalam program ini, program meminta user memasukkan password sepanjang 50 karakter.
+Password tersebut akan di-XOR satu per satu dengan array kunci (local_e8) dan hasilnya
+dibandingkan dengan string acuan (local_148) yang dibentuk dari string local_168. Jika hasil
+XOR cocok, maka password benar dan ditampilkan flagnya.
+
+<img width="554" height="58" alt="image" src="https://github.com/user-attachments/assets/bf6e0152-9c04-419b-ab26-bd38e49969fb" />
+
+
+### Flag
+```
+LK25{remov1ng_symb0l_table5_is_4_comm0n_rev_tr1ck}
+```
+
+## Foren
+
+### run_me.png
+
+
+<img width="400" height="331" alt="image" src="https://github.com/user-attachments/assets/ff046516-a630-4b61-b9eb-3763013379f3" />
+
+Pada challenge ini, kita diberikan sebuah program Python yang menyimpan data biner ke dalam
+sebuah gambar PNG
+
+<img width="529" height="167" alt="image" src="https://github.com/user-attachments/assets/822849ee-366c-4a0b-97f6-f90b7b6d01ad" />
+
+
+Program ini mengonversi isi file main menjadi sebuah gambar dengan cara mengemas setiap 3
+byte sebagai satu warna pixel. Gambar yang dihasilkan menyimpan semua informasi dari file asli
+dalam bentuk visual. Teknik ini memungkinkan file biner disembunyikan atau ditransmisikan
+melalui file gambar.
+
+<img width="349" height="177" alt="image" src="https://github.com/user-attachments/assets/05f12bf9-7c41-4f29-87e6-cca409219271" />
+
+Setelah kita tahu bahwa program pertama menyimpan isi file main ke dalam gambar hidden.png
+dengan cara mengubah setiap 3 byte menjadi satu warna pixel (RGB), maka langkah berikutnya
+adalah mengembalikan data tersebut ke bentuk semula. Program kedua atau program solver
+digunakan untuk tujuan ini. Program tersebut akan membuka gambar hidden.png, lalu membaca 
+setiap pixel satu per satu. Nilai warna merah, hijau, dan biru dari setiap pixel dikumpulkan kembali menjadi urutan byte. Seluruh byte tersebut kemudian disatukan dan disimpan dalam file baru bernama extracted_main, yang merupakan hasil rekonstruksi dari file main sebelum dikonversi ke gambar.
+
+
+Penjelasan program:
+- Membuka gambar hidden.png menggunakan library Pillow (PIL) untuk dibaca pixel-nya.
+- Mengambil ukuran gambar (lebar dan tinggi) untuk menentukan seberapa banyak pixel
+yang harus dibaca.
+- Melakukan iterasi terhadap setiap pixel dari kiri ke kanan, atas ke bawah.
+- Membaca nilai RGB dari setiap pixel dan menggabungkan ketiganya sebagai tiga byte
+data.
+- Mengumpulkan semua byte ke dalam satu bytearray, sehingga membentuk kembali data
+asli yang sebelumnya dikonversi.
+- Menyimpan hasil ekstraksi ke dalam file extracted_main dalam mode biner (wb), sebagai
+hasil rekonstruksi file asli.
+
+Terakhir, tinggal cek isi file extracted_main untuk melihat flagnya
+
+### Flag
+```
+LK25{i_think_the_output_is_kinda_cool}
+```
+
+## Pwn
+
+### redirection
+
+<img width="390" height="322" alt="image" src="https://github.com/user-attachments/assets/f6290939-e008-430a-9efe-f89b7a93057d" />
+
+Kita diberikan link untuk connect ke server:
+Kita juga diberikan sebuah file binary (redirection) yang merupakan source code dari chall ini.
+Kemudian, kita membuka program tersebut menggunakan IDA untuk melakukan proses
+dekompilasi dan analisis alur program.
+
+<img width="536" height="97" alt="image" src="https://github.com/user-attachments/assets/6bc5f569-8055-4446-8c29-992cdc091b9d" />
+<img width="360" height="263" alt="image" src="https://github.com/user-attachments/assets/d54b3811-77f4-4f1a-9d75-d2d88bd67c02" />
+
+
+Penjelasan file:
+- Fungsi main() memanggil vulnerable() dengan parameter:
+<img width="269" height="27" alt="image" src="https://github.com/user-attachments/assets/d54ff819-2844-4a4f-b57a-b90c4374fd77" />
+
+- Fungsi vulnerable() melakukan hal-hal berikut
+- Membaca file flag.txt
+- Menyimpan isinya ke dalam buffer flag yang ada di .bss
+- Meminta input user dengan scanf("%s", v1) di buffer berukuran 32 byte
+- Buffer v1 dialokasikan di stack sebesar 32 byte → rawan buffer overflow
+- Binary tidak menggunakan PIE, jadi alamat flag bisa diprediksi
+
+Dengan informasi ini, kita tahu bahwa kita bisa melakukan buffer overflow untuk menimpa return
+address dan menjalankan ROP chain agar memanggil puts(flag) dan mencetak flag ke layar.
+
+<img width="475" height="303" alt="image" src="https://github.com/user-attachments/assets/bdd67c2d-58ed-433a-9587-9788402f2784" />
+
+Penjelasan Program:
+- Kita menggunakan pwntools untuk meng-handle koneksi dan pengiriman payload.
+- Payload dibuat dengan overflow sebanyak 40 byte (b"A"*40) untuk mencapai return
+address.
+- pop rdi; ret digunakan untuk mengatur argumen pertama fungsi puts(), yaitu alamat
+buffer flag.
+- Lalu kita panggil puts@plt dengan argumen flag.
+- Tambahan ret (0x40101a) digunakan untuk stack alignment jika dibutuhkan oleh sistem
+tertentu (misal glibc modern).
+
+Dengan menggunakan teknik buffer overflow dan ROP sederhana ini, kita berhasil mendapatkan
+flag dari binary yang diberikan.
+
+### Flag
+```
+LK25{flow_redirection_is_similar_to_ret2win}
 ```
