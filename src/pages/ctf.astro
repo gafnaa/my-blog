@@ -1,0 +1,273 @@
+---
+import MainLayout from '../layouts/MainLayout.astro';
+import Button from '../components/Button.astro';
+
+const challenges = [
+  {
+    id: 1,
+    category: 'Web',
+    name: 'Cookie Monster',
+    points: 100,
+    description: 'Can you find the secret in the cookies?',
+    solved: false
+  },
+  {
+    id: 2,
+    category: 'Crypto',
+    name: 'Base Maze',
+    points: 150,
+    description: 'Multiple layers of encoding. Can you decode them all?',
+    solved: false
+  },
+  {
+    id: 3,
+    category: 'Forensics',
+    name: 'Hidden in Plain Sight',
+    points: 200,
+    description: 'There\'s more to this image than meets the eye.',
+    solved: false
+  },
+  {
+    id: 4,
+    category: 'Pwn',
+    name: 'Buffer Overflow 101',
+    points: 250,
+    description: 'Classic buffer overflow challenge. Get the flag!',
+    solved: false
+  }
+];
+
+const categories = [...new Set(challenges.map(chall => chall.category))];
+---
+
+<MainLayout 
+  title="CTF Challenges" 
+  description="Test your skills with our CTF challenges"
+  url="/ctf"
+>
+  <div class="ctf-container">
+    <header class="ctf-header">
+      <h1>CTF Challenges</h1>
+      <div class="stats">
+        <div class="stat-item">
+          <span class="stat-label">Total Challenges:</span>
+          <span class="stat-value">{challenges.length}</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">Categories:</span>
+          <span class="stat-value">{categories.length}</span>
+        </div>
+      </div>
+    </header>
+
+    <div class="category-filter">
+      <button class="filter-btn active">All Categories</button>
+      {categories.map(category => (
+        <button class="filter-btn">{category}</button>
+      ))}
+    </div>
+
+    <div class="challenges-grid">
+      {challenges.map(challenge => (
+        <div class="challenge-card">
+          <div class="challenge-header">
+            <span class="points">{challenge.points} pts</span>
+          </div>
+          <h2 class="challenge-name">{challenge.name}</h2>
+          <span class="category-badge">{challenge.category}</span>
+          <p class="challenge-description">{challenge.description}</p>
+          <div class="challenge-footer">
+            <button class="view-btn">View Challenge</button>
+            {challenge.solved && <span class="solved-badge">Solved</span>}
+          </div>
+        </div>
+      ))}
+    </div>
+  </div>
+</MainLayout>
+
+<style>
+  .ctf-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem 1rem;
+  }
+
+  .ctf-header {
+    margin-bottom: 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid var(--border-color);
+  }
+
+  .ctf-header h1 {
+    font-size: 2.5rem;
+    margin: 0;
+  }
+
+  .stats {
+    display: flex;
+    gap: 2rem;
+  }
+
+  .stat-item {
+    background: var(--border-color);
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+  }
+
+  .stat-label {
+    color: var(--text-color);
+    opacity: 0.8;
+    margin-right: 0.5rem;
+  }
+
+  .stat-value {
+    font-weight: bold;
+  }
+
+  .category-filter {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .challenges-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+  }
+
+  .challenge-card {
+    background: #121420;
+    border-radius: 12px;
+    padding: 1.5rem;
+    transition: transform 0.2s ease;
+  }
+
+  .challenge-card:hover {
+    transform: translateY(-5px);
+  }
+
+  .challenge-header {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-bottom: 1rem;
+  }
+
+  .category-badge {
+    background: transparent;
+    color: var(--accent-color);
+    font-size: 12px;
+    display: inline-block;
+    margin: 0.5rem 0 1rem 0;
+  }
+
+  .points {
+    font-weight: bold;
+    color: var(--accent-color);
+  }
+
+  .challenge-name {
+    font-size: 1.5rem;
+    margin: 0 0 1rem 0;
+  }
+
+  .challenge-description {
+    color: var(--text-color);
+    opacity: 0.9;
+    margin-bottom: 1.5rem;
+    line-height: 1.5;
+  }
+
+  .challenge-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .solved-badge {
+    background: #22c55e;
+    color: var(--bg-color);
+    padding: 0.25rem 0.75rem;
+    border-radius: 999px;
+    font-size: 0.875rem;
+  }
+
+  .filter-btn {
+    background: var(--border-color);
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    color: var(--text-color);
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .filter-btn:hover,
+  .filter-btn.active {
+    background: var(--accent-color);
+    color: var(--bg-color);
+  }
+
+  .view-btn {
+    background: var(--accent-color);
+    color: var(--bg-color);
+    border: none;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .view-btn:hover {
+    opacity: 0.9;
+  }
+
+  .hidden {
+    display: none;
+  }
+
+  @media (max-width: 768px) {
+    .ctf-header {
+      flex-direction: column;
+      gap: 1rem;
+      align-items: flex-start;
+    }
+
+    .challenges-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const categoryButtons = document.querySelectorAll('.category-filter button');
+  const challengeCards = document.querySelectorAll('.challenge-card');
+
+  categoryButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      const category = button.textContent;
+      
+      categoryButtons.forEach(btn => btn.classList.remove('active'));
+      button.classList.add('active');
+
+      challengeCards.forEach(card => {
+        const badge = card.querySelector('.category-badge');
+        if (!badge) return;
+        const cardCategory = badge.textContent;
+        if (category === 'All Categories' || category === cardCategory) {
+          card.classList.remove('hidden');
+        } else {
+          card.classList.add('hidden');
+        }
+      });
+    });
+  });
+});
+</script>
