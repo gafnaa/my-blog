@@ -1,91 +1,51 @@
 ---
+import { getCollection } from 'astro:content';
 import MainLayout from '../../layouts/MainLayout.astro';
-import PostCard from '../../components/PostCard.astro';
-import { getCollection, type CollectionEntry } from 'astro:content';
 
-const posts: CollectionEntry<'blog'>[] = (await getCollection('blog')).sort(
-  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
-);
+const posts = await getCollection('blog');
+
+// Buat objek untuk mengelompokkan post berdasarkan kategori
+const postsByCategory = posts.reduce((acc, post) => {
+  const { category } = post.data;
+  if (!acc[category]) {
+    acc[category] = [];
+  }
+  acc[category].push(post);
+  return acc;
+}, {} as Record<string, typeof posts>);
+
+const categories = Object.keys(postsByCategory).sort();
 ---
 
-<MainLayout 
-  title="Gafnaa - Posts" 
-  description="Browse through all blog posts by Gafna Al Faatiha Prabowo, covering topics like CTF writeups, cybersecurity notes, and frontend development tips."
-  image="/sankya.jpg"
-  url="/posts"
+<MainLayout
+  title="All Categories"
+  description="Browse writeups and articles by category."
 >
-  <div class="posts-container">
-    <h1>All Posts</h1>
-
-    <input
-      type="text"
-      id="search-input"
-      placeholder="Search posts..."
-      class="search-bar"
-    />
-
-    <div class="posts-grid" id="posts-container">
-      {posts.map((post) => (
-        <div class="post-wrapper" data-title={post.data.title.toLowerCase()} data-excerpt={post.data.description.toLowerCase()} data-slug={post.id.replace(/\.mdx?$/, '').toLowerCase()}>
-          <PostCard 
-            title={post.data.title}
-            date={post.data.pubDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
-            excerpt={post.data.description}
-            url={`/posts/${post.id.replace(/\.mdx?$/, '')}`}
-          />
-        </div>
+  <div class="container">
+    <h1>All Categories</h1>
+    <div class="category-list">
+      {categories.map(category => (
+        <section class="category-section">
+          <h2><a href={`/posts/${category.toLowerCase().replace(/ /g, '-')}`}>{category}</a></h2>
+          <p>{postsByCategory[category].length} Posts</p>
+        </section>
       ))}
     </div>
-    <p id="no-results" class="no-results-message hidden">No posts found.</p>
   </div>
-
 </MainLayout>
 
-<script src="../../scripts/search.js"></script>
-
 <style>
-  .posts-container {
-    max-width: 1100px;
-    margin: 0 auto;
-  }
-
-  h1 {
-    font-size: 2rem;
-    margin-bottom: 1.5rem;
-  }
-
-  .search-bar {
-    width: 100%;
-    padding: 0.5rem 1rem;
-    font-size: 1rem;
+  .container { max-width: 800px; margin: 0 auto; padding: 2rem 1rem; }
+  h1 { font-size: 2.5rem; margin-bottom: 2rem; }
+  .category-list { display: grid; gap: 1rem; }
+  .category-section {
     border: 1px solid var(--divider-color);
-    border-radius: 0.5rem;
-    margin-bottom: 2rem;
-    background-color: #0A0A10;
-    color: var(--text-color);
-    transition: border-color 0.2s;
-    border-color: rgba(255, 255, 255, 0.5); /* putih dengan 50% opacity */
-
+    padding: 1.5rem;
+    border-radius: 8px;
+    transition: background-color 0.2s;
   }
-
-  .search-bar:focus {
-    outline: none;
-    border-color: var(--accent-color);
-  }
-
-  .posts-grid {
-    display: grid;
-    gap: 2rem;
-  }
-
-  .post-wrapper {
-    transition: all 0.3s ease-in-out;
-  }
-  
-  .no-results-message {
-    text-align: center;
-    margin-top: 2rem;
-    color: var(--text-color);
-    opacity: 0.7;
-  }
+  .category-section:hover { background-color: rgba(255, 255, 255, 0.05); }
+  .category-section h2 { margin: 0; font-size: 1.5rem; }
+  .category-section h2 a { color: inherit; text-decoration: none; }
+  .category-section p { margin: 0.25rem 0 0; opacity: 0.7; }
 </style>
