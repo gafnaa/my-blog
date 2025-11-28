@@ -1,12 +1,13 @@
-import { defineCollection, z } from 'astro:content';
+import { defineCollection, z } from "astro:content";
 
 const blog = defineCollection({
   schema: z.object({
     title: z.string(),
     description: z.string(),
-    // Gunakan z.coerce.date() untuk mengubah string menjadi Date secara otomatis
-    pubDate: z.coerce.date(), 
-    slug: z.string().optional(),
+    pubDate: z.coerce.date(),
+    // Tambahkan properti baru
+    category: z.string(), // e.g., "Cryptography", "Web Exploitation"
+    event: z.string().optional(), // e.g., "PicoCTF 2024"
     heroImage: z.string().optional(),
   }),
 });
