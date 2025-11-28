@@ -1,0 +1,58 @@
+
+/* Code Block Styling */
+figure[data-rehype-pretty-code-figure] {
+  margin: 1.5rem 0;
+  background-color: #0d1117;
+  border-radius: 0.5rem;
+  overflow: hidden;
+  border: 1px solid #30363d;
+}
+
+figcaption[data-rehype-pretty-code-title] {
+  background-color: #161b22;
+  color: #c9d1d9;
+  padding: 0.5rem 1rem;
+  font-size: 0.85rem;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  border-bottom: 1px solid #30363d;
+  display: flex;
+  align-items: center;
+}
+
+pre {
+  padding: 1rem 0;
+  overflow-x: auto;
+  margin: 0 !important;
+  background-color: transparent !important;
+}
+
+code {
+  display: grid;
+  counter-reset: line;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 0.9rem;
+  line-height: 1.5;
+}
+
+code > [data-line] {
+  padding: 0 1rem;
+  border-left: 2px solid transparent;
+}
+
+code > [data-line]::before {
+  counter-increment: line;
+  content: counter(line);
+  display: inline-block;
+  width: 1rem;
+  margin-right: 1.5rem;
+  text-align: right;
+  color: #6e7681;
+  font-size: 0.85rem;
+  user-select: none;
+}
+
+/* Highlighted lines */
+code > [data-line][data-highlighted-line] {
+  background-color: rgba(56, 139, 253, 0.15);
+  border-left-color: #58a6ff;
+}
