@@ -1,0 +1,284 @@
+---
+import { getCollection } from 'astro:content';
+import MainLayout from '../../../layouts/MainLayout.astro';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog');
+  
+  // Helper to get folder name from ID
+  const getFolder = (id: string) => {
+    const parts = id.replace(/\\/g, '/').split('/');
+    return parts.length > 1 && parts[0] !== 'img' ? parts[0] : 'other';
+  };
+
+  // Group posts by Event (Folder)
+  const groupedEvents = posts.reduce((acc, post) => {
+    const folder = getFolder(post.id);
+    if (folder === 'other') return acc;
+
+    if (!acc[folder]) {
+      acc[folder] = {
+        id: folder,
+        title: post.data.event || folder.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
+        posts: []
+      };
+    }
+    acc[folder].posts.push(post);
+    return acc;
+  }, {} as Record<string, { id: string, title: string, posts: typeof posts }>);
+
+  return Object.values(groupedEvents).map(event => ({
+    params: { slug: event.id },
+    props: { event }
+  }));
+}
+
+const { event } = Astro.props;
+
+// Get unique categories for filter
+const categories = ['All', ...new Set(event.posts.map(post => post.data.category))].sort();
+
+// Category styling helper (reused)
+const getCategoryStyle = (cat: string) => {
+  const lower = cat.toLowerCase();
+  if (lower.includes('web')) return 'bg-blue-900 text-blue-200 border-blue-700';
+  if (lower.includes('rev') || lower.includes('reverse')) return 'bg-purple-900 text-purple-200 border-purple-700';
+  if (lower.includes('pwn') || lower.includes('binary')) return 'bg-red-900 text-red-200 border-red-700';
+  if (lower.includes('crypto')) return 'bg-yellow-900 text-yellow-200 border-yellow-700';
+  if (lower.includes('foren')) return 'bg-green-900 text-green-200 border-green-700';
+  if (lower.includes('mobile')) return 'bg-orange-900 text-orange-200 border-orange-700';
+  return 'bg-gray-800 text-gray-300 border-gray-600';
+};
+
+const getCategoryIcon = (cat: string) => {
+  const lower = cat.toLowerCase();
+  if (lower.includes('web')) return '🌐';
+  if (lower.includes('rev')) return '⚙️';
+  if (lower.includes('pwn')) return '💀';
+  if (lower.includes('crypto')) return '🔐';
+  if (lower.includes('foren')) return '🔍';
+  if (lower.includes('mobile')) return '📱';
+  return '🏷️';
+};
+---
+
+<MainLayout
+  title={`${event.title} - Writeups`}
+  description={`Writeups for ${event.title}`}
+>
+  <div class="container">
+    <div class="header-nav">
+      <a href="/posts" class="back-link">&larr; Back to Events</a>
+      <h1 class="event-title">{event.title}</h1>
+    </div>
+    
+    <div class="filter-bar">
+      <span class="filter-label">Filter by category:</span>
+      <div class="filter-buttons">
+        {categories.map(cat => (
+          <button 
+            class={`filter-btn ${cat === 'All' ? 'active' : ''}`}
+            data-category={cat}
+          >
+            {cat}
+          </button>
+        ))}
+      </div>
+    </div>
+    
+    <div class="challenges-grid">
+      {event.posts
+        .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+        .map(post => (
+          <a href={`/posts/${post.slug}`} class="challenge-card" data-category={post.data.category}>
+            <h2 class="challenge-title">{post.data.title}</h2>
+            
+            <div class="challenge-meta">
+              <span class={`category-badge ${getCategoryStyle(post.data.category)}`}>
+                <span class="cat-icon">{getCategoryIcon(post.data.category)}</span>
+                {post.data.category}
+              </span>
+            </div>
+          </a>
+        ))
+      }
+    </div>
+  </div>
+</MainLayout>
+
+<script>
+  // Function to initialize filtering logic
+  function initFilter() {
+    const buttons = document.querySelectorAll('.filter-btn');
+    const cards = document.querySelectorAll('.challenge-card');
+
+    buttons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        // Update active button
+        buttons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        const category = btn.getAttribute('data-category');
+
+        // Filter cards
+        cards.forEach(card => {
+          const cardCat = card.getAttribute('data-category');
+          if (category === 'All' || cardCat === category) {
+            // Restore flex display since it's defined in CSS as flex
+            (card as HTMLElement).style.display = ''; 
+          } else {
+            (card as HTMLElement).style.display = 'none';
+          }
+        });
+      });
+    });
+  }
+
+  // Run on initial load
+  initFilter();
+
+  // Run on view transitions navigation
+  document.addEventListener('astro:page-load', initFilter);
+</script>
+
+<style>
+  .container { max-width: 1200px; margin: 0 auto; padding: 2rem 1rem; }
+  
+  .header-nav { margin-bottom: 2rem; }
+  
+  .back-link {
+    display: inline-block;
+    color: #8b949e;
+    text-decoration: none;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+    transition: color 0.2s;
+  }
+  .back-link:hover { color: var(--accent-color); }
+  
+  .event-title {
+    font-size: 2rem;
+    color: #fff;
+    margin: 0;
+  }
+  
+  /* Filter Bar */
+  .filter-bar {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+  }
+  
+  .filter-label {
+    color: #c9d1d9;
+    font-weight: 600;
+  }
+  
+  .filter-buttons {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+  }
+  
+  .filter-btn {
+    background: transparent;
+    border: 1px solid #30363d;
+    color: #8b949e;
+    padding: 0.4rem 0.8rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+  }
+  
+  .filter-btn:hover {
+    background: #21262d;
+    color: #c9d1d9;
+  }
+  
+  .filter-btn.active {
+    background: #238636; /* GitHub green-ish */
+    color: #ffffff;
+    border-color: #238636;
+  }
+  
+  /* Challenges Grid */
+  .challenges-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+  }
+  
+  .challenge-card {
+    background-color: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    padding: 1.5rem;
+    text-decoration: none;
+    transition: transform 0.2s, border-color 0.2s;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 140px;
+  }
+  
+  .challenge-card:hover {
+    border-color: #8b949e;
+    transform: translateY(-2px);
+  }
+  
+  .challenge-title {
+    font-size: 1.1rem;
+    color: #e6edf3;
+    margin-bottom: 1rem;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+  
+  .challenge-meta {
+    margin-top: auto;
+  }
+  
+  /* Reusing Badge Styles */
+  .category-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.25rem 0.75rem;
+    border-radius: 2rem;
+    font-size: 0.8rem;
+    font-weight: 500;
+    border-width: 1px;
+    border-style: solid;
+  }
+  
+  .bg-blue-900 { background-color: rgba(56, 139, 253, 0.15); }
+  .text-blue-200 { color: #58a6ff; }
+  .border-blue-700 { border-color: rgba(56, 139, 253, 0.4); }
+  
+  .bg-purple-900 { background-color: rgba(188, 140, 255, 0.15); }
+  .text-purple-200 { color: #bc8cff; }
+  .border-purple-700 { border-color: rgba(188, 140, 255, 0.4); }
+  
+  .bg-red-900 { background-color: rgba(255, 123, 114, 0.15); }
+  .text-red-200 { color: #ff7b72; }
+  .border-red-700 { border-color: rgba(255, 123, 114, 0.4); }
+  
+  .bg-green-900 { background-color: rgba(63, 185, 80, 0.15); }
+  .text-green-200 { color: #3fb950; }
+  .border-green-700 { border-color: rgba(63, 185, 80, 0.4); }
+  
+  .bg-orange-900 { background-color: rgba(210, 153, 34, 0.15); }
+  .text-orange-200 { color: #d29922; }
+  .border-orange-700 { border-color: rgba(210, 153, 34, 0.4); }
+  
+  .bg-yellow-900 { background-color: rgba(210, 153, 34, 0.15); }
+  .text-yellow-200 { color: #d29922; }
+  .border-yellow-700 { border-color: rgba(210, 153, 34, 0.4); }
+  
+  .bg-gray-800 { background-color: rgba(110, 118, 129, 0.15); }
+  .text-gray-300 { color: #c9d1d9; }
+  .border-gray-600 { border-color: rgba(110, 118, 129, 0.4); }
+</style>
