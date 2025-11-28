@@ -6,31 +6,23 @@
 <style>
 .footer {
   width: 100%;
-  margin-top: 4rem;
-  background-color: transparent;
-  color: var(--footer-text, #333);
-  padding: 0; /* Ensure no horizontal padding */
+  margin-top: auto; /* Push to bottom in flex container */
+  padding-top: 2rem;
 }
 
 .footer hr {
   border: none;
-  border-top: 1px solid var(--border-color, #ccc);
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
   width: 100%;
   margin: 0;
 }
 
 .footer p {
   text-align: center;
-  padding: 1.5rem 1rem;
+  padding: 1.5rem 0;
   font-size: 0.9rem;
-  color: inherit;
+  color: var(--text-color);
+  opacity: 0.6;
   margin: 0;
-}
-
-@media (prefers-color-scheme: dark) {
-  .footer {
-    background-color: transparent; /* Changed to transparent for dark mode */
-    color: var(--footer-text-dark, #aaa);
-  }
 }
 </style>
