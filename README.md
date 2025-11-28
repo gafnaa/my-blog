@@ -1,6 +1,6 @@
 # My Personal Portfolio
 
-Website portfolio saya. Sekalian nyoba Astro juga sih
+nyoba astro
 
 
 ## Teknologi

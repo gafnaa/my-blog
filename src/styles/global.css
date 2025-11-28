@@ -1,4 +1,5 @@
 @import "./code-block.css";
+@import "./flag.css";
 
 :root {
   --background-color: #0A0A10;
