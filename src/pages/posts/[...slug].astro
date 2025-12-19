@@ -25,7 +25,7 @@ const { Content, headings } = await post.render();
 // Generate Breadcrumbs from slug
 const slugParts = post.slug.split('/').filter(p => p);
 const breadcrumbs = slugParts.map((part, index) => {
-  const path = `/posts/${slugParts.slice(0, index + 1).join('/')}`;
+  const path = `/posts/event/${slugParts.slice(0, index + 1).join('/')}`;
   const text = part.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
   return { text, path };
 });
@@ -101,7 +101,7 @@ const currentSlug = post.slug;
           {prevPost ? (
             <a href={`/posts/${prevPost.slug}`} class="nav-btn prev">
               <span class="label">Previous</span>
-              <span class="nav-title">sh; {prevPost.data.title}</span>
+              <span class="nav-title">&lsaquo; {prevPost.data.title}</span>
             </a>
           ) : (
             <div /> /* Empty div to maintain spacing if only Next exists */
@@ -138,6 +138,18 @@ const currentSlug = post.slug;
   /* Sidebar styling */
   aside {
     display: none; /* Hidden on mobile */
+  }
+
+  .post-content {
+     min-width: 0; /* Crucial for CSS Grid to prevent content blowout */
+  }
+  
+  article img {
+    max-width: 100%;
+    height: auto;
+    display: block;
+    margin: 1.5rem auto;
+    border-radius: 8px; /* Optional: adds nice rounded corners */
   }
 
   /* Sidebar Left (Global TOC) Styling */
