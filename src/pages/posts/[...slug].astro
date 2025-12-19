@@ -6,23 +6,44 @@ import { SITE_TITLE } from '../../consts';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog');
-  return posts.map((post) => ({
+  // Sort posts by date descending
+  posts.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+  
+  return posts.map((post, i) => ({
     params: { slug: post.slug },
-    props: post,
+    props: {
+      post,
+      prevPost: i + 1 < posts.length ? posts[i + 1] : null,
+      nextPost: i > 0 ? posts[i - 1] : null,
+    },
   }));
 }
 
-const post = Astro.props;
+const { post, prevPost, nextPost } = Astro.props;
 const { Content, headings } = await post.render();
 
 // Generate Breadcrumbs from slug
 const slugParts = post.slug.split('/').filter(p => p);
 const breadcrumbs = slugParts.map((part, index) => {
   const path = `/posts/${slugParts.slice(0, index + 1).join('/')}`;
-  // Ganti '-' dengan spasi dan ubah jadi Title Case untuk tampilan
   const text = part.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase());
   return { text, path };
 });
+
+// Prepare data for Left Sidebar (Global TOC)
+const allPosts = await getCollection('blog');
+const groupedPosts = allPosts.reduce((acc, p) => {
+  const event = p.data.event || 'Other';
+  const category = p.data.category || 'Uncategorized';
+  
+  if (!acc[event]) acc[event] = {};
+  if (!acc[event][category]) acc[event][category] = [];
+  acc[event][category].push(p);
+  return acc;
+}, {} as Record<string, Record<string, typeof allPosts>>);
+
+// Helper to check if a group should be open (contains current post)
+const currentSlug = post.slug;
 ---
 
 <MainLayout
@@ -32,6 +53,32 @@ const breadcrumbs = slugParts.map((part, index) => {
   url={`/posts/${post.slug}`}
 >
   <div class="post-layout">
+    <!-- Left Sidebar: Global Navigation -->
+    <aside class="sidebar-left">
+      <nav class="global-toc">
+        {Object.keys(groupedPosts).map(event => (
+          <div class="event-group">
+            <h3 class="event-title">{event}</h3>
+            {Object.keys(groupedPosts[event]).map(category => (
+              <div class="category-group">
+                <h4 class="category-title">{category}</h4>
+                <ul>
+                  {groupedPosts[event][category].map(p => (
+                    <li>
+                      <a href={`/posts/${p.slug}`} class={currentSlug === p.slug ? 'active' : ''}>
+                        {p.data.title}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        ))}
+      </nav>
+    </aside>
+
+    <!-- Main Content -->
     <main class="post-content">
       <nav aria-label="Breadcrumb">
         <ol class="breadcrumbs">
@@ -48,10 +95,30 @@ const breadcrumbs = slugParts.map((part, index) => {
           Published on {post.data.pubDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
         </p>
         <Content />
+
+        <!-- Post Navigation -->
+        <nav class="post-navigation">
+          {prevPost ? (
+            <a href={`/posts/${prevPost.slug}`} class="nav-btn prev">
+              <span class="label">Previous</span>
+              <span class="nav-title">sh; {prevPost.data.title}</span>
+            </a>
+          ) : (
+            <div /> /* Empty div to maintain spacing if only Next exists */
+          )}
+          
+          {nextPost && (
+            <a href={`/posts/${nextPost.slug}`} class="nav-btn next">
+              <span class="label">Next</span>
+              <span class="nav-title">{nextPost.data.title} &rsaquo;</span>
+            </a>
+          )}
+        </nav>
       </article>
     </main>
 
-    <aside class="sidebar">
+    <!-- Right Sidebar: Table of Contents -->
+    <aside class="sidebar-right">
       <TableOfContents headings={headings} />
     </aside>
   </div>
@@ -63,19 +130,128 @@ const breadcrumbs = slugParts.map((part, index) => {
     display: grid;
     grid-template-columns: 1fr;
     gap: 2rem;
-    max-width: 1200px;
+    max-width: 1400px; /* Increased max-width for 3 columns */
     margin: 2rem auto;
     padding: 0 1rem;
   }
 
-  /* Layout 2 kolom untuk layar lebar */
+  /* Sidebar styling */
+  aside {
+    display: none; /* Hidden on mobile */
+  }
+
+  /* Sidebar Left (Global TOC) Styling */
+  .sidebar-left {
+    font-size: 0.9rem;
+  }
+  .global-toc {
+    position: sticky;
+    top: 2rem;
+    max-height: calc(100vh - 4rem);
+    overflow-y: auto;
+    padding-right: 1rem;
+  }
+  .event-title {
+    font-size: 1rem;
+    color: var(--accent-color);
+    margin: 1.5rem 0 0.5rem 0;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+  .event-group:first-child .event-title {
+    margin-top: 0;
+  }
+  .category-title {
+    font-size: 0.85rem;
+    color: #8b949e;
+    margin: 0.8rem 0 0.3rem 0;
+    font-weight: 600;
+  }
+  .category-group ul {
+    list-style: none;
+    padding-left: 0.5rem;
+    border-left: 1px solid var(--divider-color);
+    margin: 0;
+  }
+  .category-group li a {
+    display: block;
+    padding: 0.3rem 0 0.3rem 0.8rem;
+    color: #e6edf3;
+    text-decoration: none;
+    transition: color 0.2s;
+    font-size: 0.9em;
+    line-height: 1.3;
+  }
+  .category-group li a:hover {
+    color: var(--accent-color);
+  }
+  .category-group li a.active {
+    color: var(--accent-color);
+    font-weight: bold;
+    border-left: 2px solid var(--accent-color);
+    margin-left: -0.5rem;
+    padding-left: calc(0.8rem + 0.5rem - 2px); /* Adjust padding to keep alignment */
+    background: rgba(0, 200, 150, 0.05);
+  }
+
+  /* Post Navigation Styling */
+  .post-navigation {
+    margin-top: 4rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--divider-color);
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+  }
+  .nav-btn {
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+    border: 1px solid var(--divider-color);
+    border-radius: 8px;
+    background: var(--card-background);
+    color: var(--text-color);
+    text-decoration: none;
+    transition: all 0.2s;
+    max-width: 45%;
+    flex: 1;
+  }
+  .nav-btn:hover {
+    border-color: var(--accent-color);
+    background: rgba(0, 200, 150, 0.05);
+  }
+  .nav-btn.prev {
+    align-items: flex-start;
+    text-align: left;
+  }
+  .nav-btn.next {
+    align-items: flex-end;
+    text-align: right;
+  }
+  .nav-btn .label {
+    font-size: 0.8rem;
+    color: #8b949e;
+    margin-bottom: 0.3rem;
+  }
+  .nav-btn .nav-title {
+    font-weight: 600;
+    font-size: 1rem;
+    color: var(--accent-color);
+  }
+
+  /* Layout Breakpoints */
   @media (min-width: 1024px) {
+    aside {
+      display: block;
+    }
+    
     .post-layout {
-      grid-template-columns: minmax(0, 3fr) 1fr; /* 75% content, 25% sidebar */
+      grid-template-columns: 240px 1fr 240px; /* 3 Columns: Left, Content, Right */
+      gap: 3rem;
     }
   }
 
-  /* Breadcrumbs */
+  /* Breadcrumbs & Typography (Existing styles preserved/adapted) */
   .breadcrumbs {
     list-style: none;
     padding: 0;
@@ -86,20 +262,10 @@ const breadcrumbs = slugParts.map((part, index) => {
     font-size: 0.9rem;
     opacity: 0.8;
   }
-  .breadcrumbs li {
-    display: flex;
-    align-items: center;
-  }
-  .breadcrumbs a {
-    color: inherit;
-    text-decoration: none;
-  }
-  .breadcrumbs a:hover {
-    text-decoration: underline;
-  }
-  .breadcrumbs span {
-    margin: 0 0.5rem;
-  }
+  .breadcrumbs li { display: flex; align-items: center; }
+  .breadcrumbs a { color: inherit; text-decoration: none; }
+  .breadcrumbs a:hover { text-decoration: underline; }
+  .breadcrumbs span { margin: 0 0.5rem; }
 
   .title {
     font-size: 2.8rem;
@@ -112,7 +278,6 @@ const breadcrumbs = slugParts.map((part, index) => {
     margin-bottom: 2rem;
   }
 
-  /* Style global untuk konten dari markdown */
   article :global(h2) {
     font-size: 1.8em;
     margin-top: 2rem;
@@ -123,30 +288,19 @@ const breadcrumbs = slugParts.map((part, index) => {
     font-size: 1.4em;
     margin-top: 1.5rem;
   }
-
   article :global(p) {
     margin-bottom: 1.5rem;
     text-align: justify;
   }
-
-  article :global(ul), 
-  article :global(ol) {
+  article :global(ul), article :global(ol) {
     margin-bottom: 1.5rem;
     padding-left: 1.5rem;
     margin-left: 0.5rem;
   }
-
-  article :global(ul) {
-    list-style-type: disc;
-  }
-
-  article :global(ol) {
-    list-style-type: decimal;
-  }
-
+  article :global(ul) { list-style-type: disc; }
+  article :global(ol) { list-style-type: decimal; }
   article :global(li) {
     margin-bottom: 0.5rem;
     padding-left: 0.5rem;
   }
-  /* (Tambahkan style global lainnya dari file lama Anda di sini jika perlu) */
 </style>
