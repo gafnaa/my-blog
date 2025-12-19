@@ -26,7 +26,7 @@ pre {
   background-color: transparent !important;
 }
 
-code {
+pre > code {
   display: grid;
   counter-reset: line;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
@@ -34,12 +34,12 @@ code {
   line-height: 1.5;
 }
 
-code > [data-line] {
+pre > code > [data-line] {
   padding: 0 1rem;
   border-left: 2px solid transparent;
 }
 
-code > [data-line]::before {
+pre > code > [data-line]::before {
   counter-increment: line;
   content: counter(line);
   display: inline-block;
@@ -52,7 +52,22 @@ code > [data-line]::before {
 }
 
 /* Highlighted lines */
-code > [data-line][data-highlighted-line] {
+pre > code > [data-line][data-highlighted-line] {
   background-color: rgba(56, 139, 253, 0.15);
   border-left-color: #58a6ff;
+}
+
+/* Inline Code Styling */
+:not(pre) > code {
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #e0e0e0;
+  padding: 0.2rem 0.4rem;
+  border-radius: 4px;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+  font-size: 0.85em;
+  word-break: break-word; /* Prevents long words from overflowing */
+  display: inline; /* Forces inline display */
+  margin: 0;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
 }
