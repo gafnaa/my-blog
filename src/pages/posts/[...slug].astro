@@ -315,4 +315,18 @@ const currentSlug = post.slug;
     margin-bottom: 0.5rem;
     padding-left: 0.5rem;
   }
+
+  article :global(blockquote) {
+    border-left: 4px solid var(--accent-color);
+    background: linear-gradient(to right, rgba(0, 200, 150, 0.05), transparent);
+    padding: 1rem 1.5rem;
+    margin: 2rem 0;
+    border-radius: 0 8px 8px 0;
+    font-style: italic;
+    color: #cbd5e1;
+  }
+
+  article :global(blockquote) :global(p) {
+    margin-bottom: 0;
+  }
 </style>
