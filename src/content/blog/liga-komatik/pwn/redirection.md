@@ -7,8 +7,6 @@ event: "Liga Komatik"
 heroImage: ""
 ---
 
-## Redirection
-
 <img width="390" height="322" alt="image" src="https://github.com/user-attachments/assets/f6290939-e008-430a-9efe-f89b7a93057d" />
 
 Kita diberikan link untuk connect ke server:
