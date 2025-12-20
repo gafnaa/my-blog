@@ -329,6 +329,23 @@ const currentSlug = post.slug;
   article :global(blockquote) :global(p) {
     margin-bottom: 0;
   }
+
+  /* Link styling within Markdown content */
+  article :global(a) {
+    color: var(--accent-color);
+    text-decoration: underline;
+    text-underline-offset: 4px;
+    transition: all 0.2s ease;
+  }
+
+  article :global(a):hover {
+    text-decoration: none;
+    opacity: 0.8;
+    background-color: rgba(0, 200, 150, 0.1); /* Subtle highlight on hover */
+    border-radius: 4px;
+    padding: 0 4px;
+    margin: 0 -4px; /* Adjust for padding shift */
+  }
 </style>
 
 <script>
