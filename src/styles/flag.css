@@ -1,7 +1,7 @@
 .flag-component {
   display: flex;
   align-items: center;
-  background-color: rgba(20, 40, 20, 0.6);
+  background-color: rgba(12, 58, 40, 0.6);
   border: 1px solid #1e3a1e;
   border-radius: 8px;
   padding: 1rem;
@@ -9,18 +9,19 @@
   color: #e0e0e0;
   font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  justify-content: center;
 }
 
 .flag-component svg {
-  width: 24px;
-  height: 24px;
-  margin-right: 1rem;
-  color: #00c896;
+  width: 20px;
+  height: 20px;
+  margin-right: 0.5rem;
+  color: #007558;
   flex-shrink: 0;
 }
 
 .flag-component .content {
   font-weight: 600;
   word-break: break-all;
-  font-size: 1.1rem;
+  font-size: 1rem;
 }
