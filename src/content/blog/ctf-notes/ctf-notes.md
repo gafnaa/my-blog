@@ -69,12 +69,6 @@ The regex expression is `/^[0–9a-z ]+$/i`
 - Only numbers and lowercase
 - Key insensitive
 
-![alt text](img/image.png)
-
-![alt text](img/image-1.png)
-
----
-
 The Regex filter bypass is:
 
 `/(\b)(on\S+)(\s*)=|javascript|<(|\/|[^\/>][^>]+|\/[^>][^>]+)>|({+.*}+)/`

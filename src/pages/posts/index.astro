@@ -13,12 +13,12 @@ const getFolder = (id: string) => {
 // Group posts by Event (Folder)
 const groupedEvents = posts.reduce((acc, post) => {
   const folder = getFolder(post.id);
-  if (folder === 'other') return acc; // Skip root files if any
-
+  // Removed skipping 'other' to allow root files
+  
   if (!acc[folder]) {
     acc[folder] = {
       id: folder,
-      title: post.data.event || folder.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase()),
+      title: folder === 'other' ? 'General' : (post.data.event || folder.replace(/-/g, ' ').replace(/\b\w/g, l => l.toUpperCase())),
       posts: [],
       categories: new Set<string>(),
       dates: []
