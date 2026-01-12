@@ -9,7 +9,8 @@ export default function GitHubCalendarWrapper() {
         // @ts-ignore
         const mod = await import('react-github-calendar');
         // @ts-ignore
-        setCalendarComponent(() => mod.default || mod);
+        const Calendar = mod.default || mod.GitHubCalendar || mod;
+        setCalendarComponent(() => Calendar);
       } catch (e) {
         console.error("Failed to load GitHubCalendar", e);
       }
