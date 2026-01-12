@@ -62,7 +62,9 @@ const events = Object.values(groupedEvents).map(event => {
       {events.map(event => (
         <a href={`/posts/event/${event.id}`} class="post-card">
           <div class="card-content">
-            <div class="card-eyebrow">EVENT / CTF</div>
+            <div class="card-eyebrow">
+              {event.id === 'ctf-notes' ? 'NOTE / CHEATSHEET' : 'EVENT / CTF'}
+            </div>
             <h2 class="card-title">{event.title}</h2>
             <p class="card-description">
               Collection of {event.posts.length} challenges covering {event.categoryList.slice(0, 3).join(', ')}
