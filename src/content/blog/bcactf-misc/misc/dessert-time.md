@@ -1,8 +1,9 @@
 ---
-title: "Dessert Time"
-description: ""
-pubDate: 2025-07-14 19:00
+title: "Dessert Time (BCACTF)"
+description: "Reconstructing the flag by analyzing a schedule in Google Sheets."
+pubDate: 2025-07-14 19:00:00
 category: "Misc"
+type: "writeup"
 event: "BCACTF"
 heroImage: ""
 ---

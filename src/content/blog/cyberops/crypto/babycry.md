@@ -1,8 +1,9 @@
 ---
-title: "Baby cry"
-description: ""
-pubDate: 2025-08-1 19:00
+title: "Baby Cry (Cyber Ops 2.0)"
+description: "Solving a Vigenere cipher challenge where the flag pattern guides the key recovery."
+pubDate: 2025-08-01 19:00:00
 category: "Cryptography"
+type: "writeup"
 event: "Cyber Ops Clash 2.0"
 heroImage: ""
 ---

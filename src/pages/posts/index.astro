@@ -36,18 +36,12 @@ const events = Object.values(groupedEvents).map(event => {
   const sortedDates = event.dates.sort((a, b) => a.valueOf() - b.valueOf());
   const startDate = sortedDates[0];
   const endDate = sortedDates[sortedDates.length - 1];
-  
-  // Format date range
-  const dateOptions: Intl.DateTimeFormatOptions = { month: 'short', day: 'numeric' };
-  const timeOptions: Intl.DateTimeFormatOptions = { hour: 'numeric', minute: '2-digit' };
-  
-  const startStr = startDate.toLocaleDateString('en-US', dateOptions);
-  const endStr = endDate.toLocaleDateString('en-US', dateOptions);
   const year = startDate.getFullYear();
   
-  const dateDisplay = startStr === endStr 
-    ? `${startStr}, ${year}` 
-    : `${startStr} - ${endStr}, ${year}`;
+  // Create a simpler date display for the event card
+  const dateDisplay = startDate.getFullYear() === endDate.getFullYear() 
+    ? `${year}` 
+    : `${startDate.getFullYear()} - ${endDate.getFullYear()}`;
 
   return {
     ...event,
@@ -55,67 +49,32 @@ const events = Object.values(groupedEvents).map(event => {
     categoryList: Array.from(event.categories).sort()
   };
 }).sort((a, b) => b.dates[b.dates.length - 1].valueOf() - a.dates[a.dates.length - 1].valueOf()); // Sort by newest
-
-// Category styling helper
-const getCategoryStyle = (cat: string) => {
-  const lower = cat.toLowerCase();
-  if (lower.includes('web')) return 'bg-blue-900 text-blue-200 border-blue-700';
-  if (lower.includes('rev') || lower.includes('reverse')) return 'bg-purple-900 text-purple-200 border-purple-700';
-  if (lower.includes('pwn') || lower.includes('binary')) return 'bg-red-900 text-red-200 border-red-700';
-  if (lower.includes('crypto')) return 'bg-yellow-900 text-yellow-200 border-yellow-700';
-  if (lower.includes('foren')) return 'bg-green-900 text-green-200 border-green-700';
-  if (lower.includes('mobile')) return 'bg-orange-900 text-orange-200 border-orange-700';
-  return 'bg-gray-800 text-gray-300 border-gray-600';
-};
-
-const getCategoryIcon = (cat: string) => {
-  const lower = cat.toLowerCase();
-  if (lower.includes('web')) return '🌐';
-  if (lower.includes('rev')) return '⚙️';
-  if (lower.includes('pwn')) return '💀';
-  if (lower.includes('crypto')) return '🔐';
-  if (lower.includes('foren')) return '🔍';
-  if (lower.includes('mobile')) return '📱';
-  return '🏷️';
-};
 ---
 
 <MainLayout
-  title="Writeups"
-  description="CTF Writeups and Articles"
+  title="Blog"
+  description="Writesups, events, and other notes"
 >
   <div class="container">
-    <h1 class="page-title">Writeups</h1>
+    <h1 class="page-title">Blog</h1>
     
-    <div class="events-grid">
+    <div class="posts-grid">
       {events.map(event => (
-        <a href={`/posts/event/${event.id}`} class="event-card">
-          <div class="card-header">
-            <h2 class="event-title">{event.title}</h2>
-          </div>
-          
-          <div class="card-meta">
-            <div class="meta-item">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
-              <span>{event.dateDisplay}</span>
-            </div>
-            <div class="meta-item">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><circle cx="12" cy="12" r="3"></circle></svg>
-              <span>{event.posts.length} challenges</span>
-            </div>
-            <div class="meta-item">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
-              <span>Team</span>
+        <a href={`/posts/event/${event.id}`} class="post-card">
+          <div class="card-content">
+            <div class="card-eyebrow">EVENT / CTF</div>
+            <h2 class="card-title">{event.title}</h2>
+            <p class="card-description">
+              Collection of {event.posts.length} challenges covering {event.categoryList.slice(0, 3).join(', ')}
+              {event.categoryList.length > 3 && ' and more'}.
+            </p>
+            <div class="card-meta">
+              <span class="meta-date">{event.dateDisplay}</span>
+              <span class="meta-count">• {event.posts.length} Posts</span>
             </div>
           </div>
-          
-          <div class="categories-list">
-            {event.categoryList.map(cat => (
-              <span class={`category-badge ${getCategoryStyle(cat)}`}>
-                <span class="cat-icon">{getCategoryIcon(cat)}</span>
-                {cat}
-              </span>
-            ))}
+          <div class="card-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
           </div>
         </a>
       ))}
@@ -124,92 +83,85 @@ const getCategoryIcon = (cat: string) => {
 </MainLayout>
 
 <style>
-  .container { max-width: 1000px; margin: 0 auto; padding: 2rem 1rem; }
-  .page-title { font-size: 2.5rem; margin-bottom: 2rem; color: #fff; }
+  .container { max-width: 800px; margin: 0 auto; padding: 4rem 1rem; }
+  .page-title { 
+    font-size: 3rem; 
+    font-weight: 700;
+    margin-bottom: 3rem; 
+    color: #fff; 
+    letter-spacing: -0.02em;
+  }
   
-  .events-grid { display: flex; flex-direction: column; gap: 1.5rem; }
+  .posts-grid { display: flex; flex-direction: column; gap: 1rem; }
   
-  .event-card {
-    display: block;
-    background-color: #161b22;
+  .post-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    background-color: #0d1117;
     border: 1px solid #30363d;
-    border-radius: 6px;
+    border-radius: 8px;
     padding: 1.5rem;
     text-decoration: none;
-    transition: transform 0.2s, border-color 0.2s;
+    transition: all 0.2s ease;
+    position: relative;
+    overflow: hidden;
   }
   
-  .event-card:hover {
+  .post-card:hover {
     border-color: #8b949e;
     transform: translateY(-2px);
+    background-color: #161b22;
   }
   
-  .event-title {
-    font-size: 1.25rem;
+  .card-content {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .card-eyebrow {
+    font-size: 0.75rem;
+    text-transform: uppercase;
     color: #58a6ff;
-    margin-bottom: 0.75rem;
-    font-weight: 600;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.5rem;
   }
   
+  .card-title {
+    font-size: 1.25rem;
+    color: #fff;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    line-height: 1.4;
+  }
+  
+  .card-description {
+    color: #8b949e;
+    font-size: 0.95rem;
+    margin-bottom: 1rem;
+    line-height: 1.6;
+  }
+
   .card-meta {
     display: flex;
-    gap: 1.5rem;
-    color: #8b949e;
-    font-size: 0.9rem;
-    margin-bottom: 1rem;
-    flex-wrap: wrap;
-  }
-  
-  .meta-item {
-    display: flex;
     align-items: center;
     gap: 0.5rem;
-  }
-  
-  .categories-list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-  }
-  
-  .category-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.4rem;
-    padding: 0.25rem 0.75rem;
-    border-radius: 2rem;
     font-size: 0.85rem;
-    font-weight: 500;
-    border-width: 1px;
-    border-style: solid;
+    color: #484f58;
   }
   
-  /* Tailwind-like utilities for badges (since we might not have full Tailwind) */
-  .bg-blue-900 { background-color: rgba(56, 139, 253, 0.15); }
-  .text-blue-200 { color: #58a6ff; }
-  .border-blue-700 { border-color: rgba(56, 139, 253, 0.4); }
-  
-  .bg-purple-900 { background-color: rgba(188, 140, 255, 0.15); }
-  .text-purple-200 { color: #bc8cff; }
-  .border-purple-700 { border-color: rgba(188, 140, 255, 0.4); }
-  
-  .bg-red-900 { background-color: rgba(255, 123, 114, 0.15); }
-  .text-red-200 { color: #ff7b72; }
-  .border-red-700 { border-color: rgba(255, 123, 114, 0.4); }
-  
-  .bg-green-900 { background-color: rgba(63, 185, 80, 0.15); }
-  .text-green-200 { color: #3fb950; }
-  .border-green-700 { border-color: rgba(63, 185, 80, 0.4); }
-  
-  .bg-orange-900 { background-color: rgba(210, 153, 34, 0.15); }
-  .text-orange-200 { color: #d29922; }
-  .border-orange-700 { border-color: rgba(210, 153, 34, 0.4); }
-  
-  .bg-yellow-900 { background-color: rgba(210, 153, 34, 0.15); }
-  .text-yellow-200 { color: #d29922; }
-  .border-yellow-700 { border-color: rgba(210, 153, 34, 0.4); }
-  
-  .bg-gray-800 { background-color: rgba(110, 118, 129, 0.15); }
-  .text-gray-300 { color: #c9d1d9; }
-  .border-gray-600 { border-color: rgba(110, 118, 129, 0.4); }
+  .meta-count {
+    color: #8b949e;
+  }
+
+  .card-icon {
+    margin-left: 1rem;
+    color: #484f58;
+    transition: color 0.2s;
+  }
+
+  .post-card:hover .card-icon {
+    color: #fff;
+  }
 </style>
