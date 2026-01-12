@@ -49,6 +49,9 @@ const events = Object.values(groupedEvents).map(event => {
     categoryList: Array.from(event.categories).sort()
   };
 }).sort((a, b) => b.dates[b.dates.length - 1].valueOf() - a.dates[a.dates.length - 1].valueOf()); // Sort by newest
+
+const notes = events.filter(e => e.id === 'ctf-notes');
+const writeups = events.filter(e => e.id !== 'ctf-notes');
 ---
 
 <MainLayout
@@ -58,29 +61,59 @@ const events = Object.values(groupedEvents).map(event => {
   <div class="container">
     <h1 class="page-title">Blog</h1>
     
-    <div class="posts-grid">
-      {events.map(event => (
-        <a href={`/posts/event/${event.id}`} class="post-card">
-          <div class="card-content">
-            <div class="card-eyebrow">
-              {event.id === 'ctf-notes' ? 'NOTE / CHEATSHEET' : 'EVENT / CTF'}
-            </div>
-            <h2 class="card-title">{event.title}</h2>
-            <p class="card-description">
-              Collection of {event.posts.length} challenges covering {event.categoryList.slice(0, 3).join(', ')}
-              {event.categoryList.length > 3 && ' and more'}.
-            </p>
-            <div class="card-meta">
-              <span class="meta-date">{event.dateDisplay}</span>
-              <span class="meta-count">• {event.posts.length} Posts</span>
-            </div>
-          </div>
-          <div class="card-icon">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
-          </div>
-        </a>
-      ))}
-    </div>
+    {notes.length > 0 && (
+      <div class="section-group">
+        <h2 class="section-title">NOTE</h2>
+        <div class="posts-grid">
+          {notes.map(event => (
+            <a href={`/posts/event/${event.id}`} class="post-card">
+              <div class="card-content">
+                <div class="card-eyebrow">NOTE / CHEATSHEET</div>
+                <h2 class="card-title">{event.title}</h2>
+                <p class="card-description">
+                  Collection of {event.posts.length} challenges covering {event.categoryList.slice(0, 3).join(', ')}
+                  {event.categoryList.length > 3 && ' and more'}.
+                </p>
+                <div class="card-meta">
+                  <span class="meta-date">{event.dateDisplay}</span>
+                  <span class="meta-count">• {event.posts.length} Posts</span>
+                </div>
+              </div>
+              <div class="card-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    )}
+
+    {writeups.length > 0 && (
+      <div class="section-group">
+        <h2 class="section-title">WRITEUP</h2>
+        <div class="posts-grid">
+          {writeups.map(event => (
+            <a href={`/posts/event/${event.id}`} class="post-card">
+              <div class="card-content">
+                <div class="card-eyebrow">EVENT / CTF</div>
+                <h2 class="card-title">{event.title}</h2>
+                <p class="card-description">
+                  Collection of {event.posts.length} challenges covering {event.categoryList.slice(0, 3).join(', ')}
+                  {event.categoryList.length > 3 && ' and more'}.
+                </p>
+                <div class="card-meta">
+                  <span class="meta-date">{event.dateDisplay}</span>
+                  <span class="meta-count">• {event.posts.length} Posts</span>
+                </div>
+              </div>
+              <div class="card-icon">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="7" y1="17" x2="17" y2="7"></line><polyline points="7 7 17 7 17 17"></polyline></svg>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    )}
   </div>
 </MainLayout>
 
@@ -164,7 +197,17 @@ const events = Object.values(groupedEvents).map(event => {
     margin-top: 0.25rem;
   }
 
-  .post-card:hover .card-icon {
-    color: #fff;
+  .section-group {
+    margin-bottom: 1.5rem;
+  }
+  
+  .section-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+    color: #e6edf3;
+    border-bottom: 1px solid #30363d;
+    padding-bottom: 0.5rem;
+    display: inline-block;
   }
 </style>
