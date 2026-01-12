@@ -19,6 +19,7 @@
     "astro": "^5.7.14",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
+    "react-github-calendar": "^5.0.4",
     "rehype-pretty-code": "^0.14.1",
     "shiki": "^3.17.0"
   },
