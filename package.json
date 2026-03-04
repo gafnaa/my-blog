@@ -16,6 +16,9 @@
     "@astrojs/check": "^0.9.6",
     "@astrojs/markdown-remark": "^6.3.2",
     "@astrojs/rss": "^4.0.14",
+    "@unocss/astro": "^66.4.2",
+    "@unocss/preset-mini": "^66.4.2",
+    "@unocss/preset-typography": "^66.4.2",
     "@waline/client": "^3.8.0",
     "astro": "^5.16.6",
     "astro-pure": "1.4.0",
@@ -23,7 +26,8 @@
     "rehype-katex": "^7.0.1",
     "remark-math": "^6.0.0",
     "sharp": "^0.34.5",
-    "typescript": "^5.9.3"
+    "typescript": "^5.9.3",
+    "unocss": "^66.4.2"
   },
   "devDependencies": {}
 }

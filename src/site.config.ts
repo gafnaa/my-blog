@@ -40,7 +40,6 @@ export const theme: ThemeUserConfig = {
       { title: "Archives", link: "/archives" },
       { title: "Tags", link: "/tags" },
       { title: "Projects", link: "/projects" },
-      { title: "Achievements", link: "/achievements" },
       { title: "About", link: "/about" },
       { title: "Search", link: "/search" },
     ],

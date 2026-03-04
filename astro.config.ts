@@ -29,6 +29,10 @@ export default defineConfig({
   // https://astro-pure.js.org/docs/setup/deployment#platform-with-base-path
   // base: '/astro-pure/',
   trailingSlash: "never",
+  redirects: {
+    "/posts": "/blog",
+    "/posts/[...id]": "/blog/[...id]",
+  },
   // root: './my-project-directory',
   server: { host: true },
 
