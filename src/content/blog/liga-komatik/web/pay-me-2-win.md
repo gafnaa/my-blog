@@ -1,10 +1,12 @@
 ---
 title: "pay me 2 win"
 description: ""
-pubDate: 2025-07-13 21:00
+publishDate: "2025-07-13T21:00:00+07:00"
 category: "Web Exploitation"
 event: "Liga Komatik"
-heroImage: ""
+tags:
+  - "web-exploitation"
+  - "liga-komatik"
 ---
 
 ## Pay me 2 win

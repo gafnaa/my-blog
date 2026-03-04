@@ -1,10 +1,12 @@
 ---
 title: "Another RSA Challenge"
 description: ""
-pubDate: 2025-08-1 19:00
+publishDate: "2025-08-01T19:00:00+07:00"
 category: "Cryptography"
 event: "Cyber Ops Clash 2.0"
-heroImage: ""
+tags:
+  - "cryptography"
+  - "cyber-ops-clash-20"
 ---
 
 ## Another RSA Challenge
@@ -46,7 +48,7 @@ print("leaked_phi = ", phi&((1<<(BITS*(rand-1)))-1))
 print("ct = ", c)
 ```
 
-![alt text](/src/content/blog/img/anotherrsa.png)
+![alt text](/images/blog/anotherrsa.png)
 
 Pertama, kita lihat dulu skrip generatornya. Intinya, skrip ini melakukan beberapa
 hal:

@@ -1,10 +1,12 @@
 ---
 title: "Kunci Veridian"
 description: ""
-pubDate: 2025-07-13 21:00
+publishDate: "2025-07-13T21:00:00+07:00"
 category: "Crypto"
 event: "FIT Competition"
-heroImage: ""
+tags:
+  - "crypto"
+  - "fit-competition"
 ---
 
 ## Kunci Veridian

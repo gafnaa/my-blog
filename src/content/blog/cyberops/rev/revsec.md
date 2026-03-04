@@ -1,10 +1,12 @@
 ---
 title: "RevSec"
 description: ""
-pubDate: 2025-08-1 19:00
+publishDate: "2025-08-01T19:00:00+07:00"
 category: "Reverse Engineering"
 event: "Cyber Ops Clash 2.0"
-heroImage: ""
+tags:
+  - "reverse-engineering"
+  - "cyber-ops-clash-20"
 ---
 
 ## RevSec

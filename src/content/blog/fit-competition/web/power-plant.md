@@ -1,10 +1,12 @@
 ---
 title: "Power Plant"
 description: ""
-pubDate: 2025-07-13 21:00
+publishDate: "2025-07-13T21:00:00+07:00"
 category: "Web Exploitation"
 event: "FIT Competition"
-heroImage: ""
+tags:
+  - "web-exploitation"
+  - "fit-competition"
 ---
 
 ## Power Plant

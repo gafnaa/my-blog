@@ -1,10 +1,12 @@
 ---
 title: "Free Flag"
 description: ""
-pubDate: 2025-05-11 21:00
+publishDate: "2025-05-11T21:00:00+07:00"
 category: "Reverse Engineering"
 event: "IFEST13"
-heroImage: ""
+tags:
+  - "reverse-engineering"
+  - "ifest13"
 ---
 
 ## Free Flag

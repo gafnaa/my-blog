@@ -1,10 +1,12 @@
 ---
 title: "redirection"
 description: ""
-pubDate: 2025-07-13 21:00
+publishDate: "2025-07-13T21:00:00+07:00"
 category: "Pwn"
 event: "Liga Komatik"
-heroImage: ""
+tags:
+  - "pwn"
+  - "liga-komatik"
 ---
 
 <img width="390" height="322" alt="image" src="https://github.com/user-attachments/assets/f6290939-e008-430a-9efe-f89b7a93057d" />
