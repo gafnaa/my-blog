@@ -1,150 +1,197 @@
 ---
-import MainLayout from '../layouts/MainLayout.astro';
-import ProfileSection from '../components/ProfileSection.astro';
-import PostCard from '../components/PostCard.astro';
-import Button from '../components/Button.astro';
-import GitHubCalendarWrapper from '../components/GitHubCalendarWrapper.tsx';
-import { SITE_DESCRIPTION } from '../consts';
-import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets'
 
-const allPosts = (await getCollection('blog'))
-  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+import { Quote } from 'astro-pure/advanced'
+import { PostPreview } from 'astro-pure/components/pages'
+import { getBlogCollection, sortMDByDate } from 'astro-pure/server'
+import { Button, Card, Icon, Label } from 'astro-pure/user'
+import PageLayout from '@/layouts/BaseLayout.astro'
+import ProjectCard from '@/components/home/ProjectCard.astro'
+import Section from '@/components/home/Section.astro'
+import SkillLayout from '@/components/home/SkillLayout.astro'
+import config from '@/site-config'
 
-const posts = [];
-const seenEvents = new Set();
+const languages = ['Html', 'JavaScript', 'CSS', 'Shell']
+const frontend = ['TypeScript', 'Vite', 'Webpack', 'Astro']
+const backend = ['Vercel', 'Waline']
 
-for (const post of allPosts) {
-  const event = post.data.event;
-  if (event) {
-    if (seenEvents.has(event)) continue;
-    seenEvents.add(event);
-  }
-  posts.push(post);
-  if (posts.length >= 3) break;
-}
+const MAX_POSTS = 10
+const allPosts = await getBlogCollection()
+const allPostsByDate = sortMDByDate(allPosts).slice(0, MAX_POSTS)
+
+const imagePath = config.logo.src
+const images = import.meta.glob<{ default: ImageMetadata }>(
+  '/src/assets/*.{jpeg,jpg,png,gif,avif,webp}'
+)
+if (!images[imagePath])
+  throw new Error(
+    `"${imagePath}" does not exist in glob: "src/assets/*.{jpeg,jpg,png,gif,avif,webp}"`
+  )
 ---
 
-<MainLayout 
-  title="Gafnaa - Home" 
-  description={SITE_DESCRIPTION} 
-  image="/sankya.jpg" 
-  url="/"
->
-  <ProfileSection />
-  
-  <div class="bio-section">
-    <p>
-      Hi! I am a frontend developer who also has a great passion in the world of cyber security as a CTF player. In addition to building attractive and responsive interfaces, I like to challenge myself with various cybersecurity competitions to hone my skills and insights. On the other hand, I also enjoy creativity through motion design, creating lively and communicative visuals. This combination allows me to work with focus but still expressive, always trying to present cool and safe work.
-    </p>
-  </div>
+<PageLayout meta={{ title: 'Home' }} highlightColor='#659EB9'>
+  <main class='flex w-full flex-col items-center'>
+    <section class='animate mb-10 flex flex-col items-center gap-y-7' id='content-header'>
+      <Image
+        src={images[imagePath]()}
+        alt={config.logo.alt || 'Profile'}
+        class='h-28 w-auto rounded-full border p-1'
+        loading='eager'
+        fetchpriority='high'
+      />
 
-  <hr />
+      <div class='flex flex-col items-center gap-y-4'>
+        <h1 class='text-3xl font-medium'>{config.author}</h1>
+        <div class='flex flex-wrap justify-center gap-x-7 gap-y-3'>
+          <Label title='Somewhere'>
+            <Icon name='location' class='size-5' slot='icon' />
+          </Label>
+          <Label
+            title='Source code'
+            as='a'
+            href='https://github.com/cworld1/astro-theme-pure'
+            target='_blank'
+          >
+            <Icon name='github' class='size-5' slot='icon' />
+          </Label>
+        </div>
+      </div>
 
-  <section class="contributions-section">
-    <h2>GitHub Contributions</h2>
-    <div class="graph-container">
-      <GitHubCalendarWrapper client:visible />
-    </div>
-    <div class="github-link">
-      <a href="https://github.com/gafnaa" target="_blank" rel="noopener noreferrer" class="gh-btn">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 19c-5 1.5-5-2.5-7-3m14 6v-3.87a3.37 3.37 0 0 0-.94-2.61c3.14-.35 6.44-1.54 6.44-7A5.44 5.44 0 0 0 20 4.77 5.07 5.07 0 0 0 19.91 1S18.73.65 16 2.48a13.38 13.38 0 0 0-7 0C6.27.65 5.09 1 5.09 1A5.07 5.07 0 0 0 5 4.77a5.44 5.44 0 0 0-1.5 3.78c0 5.42 3.3 6.61 6.44 7A3.37 3.37 0 0 0 9 18.13V22"></path></svg>
-        @gafnaa
+      {/* Get template */}
+      <a
+        href='https://github.com/cworld1/astro-theme-pure'
+        target='_blank'
+        class='flex flex-row items-center gap-x-3 rounded-full border bg-background px-4 py-2 text-sm shadow-sm transition-shadow hover:shadow-md'
+      >
+        <span class='relative flex items-center justify-center'>
+          <span
+            class='absolute size-2 animate-ping rounded-full border border-green-400 bg-green-400 opacity-75'
+          ></span>
+          <span class='size-2 rounded-full bg-green-400'></span>
+        </span>
+        <p class='font-medium text-muted-foreground'>Get Template</p>
       </a>
-    </div>
-  </section>
-  
-  <hr />
-  
-  <section class="recent-posts">
-    <h2>Recent Posts</h2>
-    
-    <div class="posts-container">
-      {posts.map(post => (
-        <PostCard 
-          title={post.data.event || post.data.title}
-          date={post.data.pubDate.toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}
-          excerpt={post.data.description}
-          url={`/posts/${post.slug}`}
+    </section>
+
+    <div id='content' class='animate flex flex-col gap-y-10 md:w-4/5 lg:w-5/6'>
+      <Section title='About'>
+        <p class='text-muted-foreground'>Developer / Designer</p>
+        <p class='text-muted-foreground'>
+          Lorem ipsum dolor sit amet, vidit suscipit at mei. Quem denique mea id. Usu ei regione
+          indoctum dissentiunt, cu meliore fuisset mei, vel quod voluptua ne. Ex dicat impedit mel,
+          at eum oratio possit voluptatum.
+        </p>
+        <Button title='More about me' class='w-fit self-end' href='/about' variant='ahead' />
+      </Section>
+      {
+        allPostsByDate.length > 0 && (
+          <Section title='Posts'>
+            <ul class='flex flex-col gap-y-1.5 sm:gap-y-2'>
+              {allPostsByDate.map((p) => (
+                <li class='flex flex-col gap-x-2 sm:flex-row'>
+                  <PostPreview post={p} />
+                </li>
+              ))}
+            </ul>
+            <Button title='More posts' class='w-fit self-end' href='/blog' variant='ahead' />
+          </Section>
+        )
+      }
+
+      {
+        /* <Section title='Experience'>
+      <Card
+        heading='Lorem Ipsum'
+        subheading='Sit amet consectetur'
+        date='Dec 2022 - Nov 2023'
+        imagePath='/src/assets/about-astro.png'
+        altText='Lorem, ipsum dolor sit'
+        imageClass='h-12 w-auto md:-start-16'
+      >
+        <ul class='ms-4 list-disc text-muted-foreground'>
+          <li>
+            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Dolore debitis recusandae, ut
+            molestiae laboriosam pariatur!
+
+            <li>Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestiae, pariatur!</li>
+          </li>
+        </ul>
+      </Card>
+      <Card
+        heading='Lorem Ipsum'
+        subheading='Sit amet consectetur'
+        date='Dec 2022 - Nov 2023'
+        imagePath='/src/assets/about-astro.png'
+        altText='Lorem, ipsum dolor sit'
+        imageClass='h-12 w-auto md:-start-16'
+      />
+    </Section> */
+      }
+      <Section title='Education'>
+        <Card
+          as='a'
+          heading='Lorem ipsum'
+          subheading='Lorem ipsum dolor sit amet, vidit suscipit at mei.'
+          date='August 2021 - July 2025'
+          href='https://www.youtube.com/watch?v=dQw4w9WgXcQ'
+        >
+          {
+            /* <ul class='ms-4 list-disc text-muted-foreground'>
+          <li>
+            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Dolore debitis recusandae, ut
+            molestiae laboriosam pariatur!
+          </li>
+          <li>Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestiae, pariatur!</li>
+        </ul> */
+          }
+        </Card>
+      </Section>
+
+      <Section title='Website List'>
+        <div class='grid grid-cols-1 gap-3 sm:grid-cols-2'>
+          <ProjectCard
+            href='https://www.youtube.com/watch?v=dQw4w9WgXcQ'
+            heading='Lorem ipsum'
+            subheading='Do not go gentle into that good night'
+            imagePath='/src/assets/projects/1.avif'
+          />
+          <ProjectCard
+            href='https://www.youtube.com/watch?v=dQw4w9WgXcQ'
+            heading='Lorem ipsum'
+            subheading='Old age burn and rave at close of day'
+            imagePath='/src/assets/projects/2.avif'
+          />
+          <ProjectCard
+            href='https://www.youtube.com/watch?v=dQw4w9WgXcQ'
+            heading='Lorem ipsum'
+            subheading='Rage, rage against the dying of the light'
+            imagePath='/src/assets/projects/3.avif'
+          />
+          <ProjectCard
+            href='/projects'
+            heading='More projects'
+            subheading='Check out more projects'
+            imagePath='/src/assets/projects/4.avif'
+          />
+        </div>
+      </Section>
+
+      <Section title='Certifications'>
+        <Card
+          as='a'
+          heading='Lorem ipsum'
+          subheading='Lorem ipsum dolor sit amet, vidit suscipit at mei. Quem denique mea id. Usu ei regione indoctum dissentiunt, cu meliore fuisset mei, vel quod voluptua ne. Ex dicat impedit mel, at eum oratio possit voluptatum. Dicat ceteros cu vim. Impetus fuisset ullamcorper pri cu, his posse iisque ad, aliquam honestatis usu id.'
+          date='July 2024'
+          href='https://www.youtube.com/watch?v=dQw4w9WgXcQ'
         />
-      ))}
+      </Section>
+
+      <Section title='Skills'>
+        <SkillLayout title='Languages' skills={languages} />
+        <SkillLayout title='Frontend' skills={frontend} />
+        <SkillLayout title='Backend' skills={backend} />
+      </Section>
     </div>
-    
-    <div class="more-btn">
-      <Button text="More Posts" href="/posts" />
-    </div>
-  </section>
-</MainLayout>
-
-<style>
-  .bio-section {
-	margin-top: 2rem;
-	padding: 2rem 0;
-    max-width: fit-content;
-    margin: 0 auto;
-  }
-  
-  .bio-section p {
-    font-size: 1rem;
-    line-height: 1.7;
-    opacity: 0.9;
-  }
-  
-  .recent-posts h2 {
-    font-size: 1.5rem;
-    margin-bottom: 1 rem;
-  }
-  
-  .posts-container {
-    margin-bottom: 2rem;
-  }
-  
-  .more-btn {
-    display: flex;
-    justify-content: center;
-  }
-
-  .contributions-section {
-    margin-bottom: 2rem;
-  }
-
-  .contributions-section h2 {
-    font-size: 1.5rem;
-    margin-bottom: 1.5rem;
-  }
-
-  .graph-container {
-    background: #0d1117;
-    border: 1px solid #30363d;
-    border-radius: 8px;
-    padding: 1rem;
-    overflow-x: auto; /* Handle overflow on small screens */
-    margin-bottom: 1rem;
-    display: flex;
-    justify-content: center;
-    color: #e6edf3; /* Ensure text color is readable */
-  }
-
-  .github-link {
-    display: flex;
-    justify-content: center;
-  }
-
-  .gh-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5rem;
-    color: #8b949e;
-    text-decoration: none;
-    font-size: 0.9rem;
-    transition: color 0.2s;
-    padding: 0.5rem 1rem;
-    border-radius: 6px;
-    border: 1px solid transparent;
-  }
-
-  .gh-btn:hover {
-    color: #58a6ff;
-    background: rgba(88, 166, 255, 0.1);
-    border-color: rgba(88, 166, 255, 0.2);
-  }
-</style>
+    <Quote class='mt-12' />
+  </main>
+</PageLayout>
