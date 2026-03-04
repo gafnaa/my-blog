@@ -82,7 +82,7 @@ span.katex-display {
         width: 2.75rem;
         top: 0.8571429em;
         bottom: 0;
-        content: '';
+        content: "";
         display: block;
         background-color: hsl(var(--muted) / var(--un-bg-opacity, 1));
         z-index: 1;
@@ -110,6 +110,35 @@ span.katex-display {
       }
     }
   }
+}
+
+/* [Flag component] */
+.flag-component {
+  position: relative;
+  display: block;
+  margin: 1.5rem 0;
+  padding: 0.95rem 1rem;
+  border: 1px solid hsl(var(--border) / var(--un-border-opacity, 1));
+  border-radius: 1rem;
+  background: hsl(var(--background) / var(--un-bg-opacity, 1));
+  box-shadow: 0 10px 25px -22px hsl(var(--foreground) / 0.65);
+}
+.flag-component svg {
+  display: none;
+}
+.flag-component .content {
+  display: block;
+  padding: 0.7rem 0.8rem;
+  border: 1px dashed hsl(var(--border) / var(--un-border-opacity, 1));
+  border-radius: 0.7rem;
+  background: hsl(var(--muted) / 0.45);
+  font-family:
+    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
+    "Courier New", monospace;
+  font-size: 0.95rem;
+  line-height: 1.7;
+  color: hsl(var(--foreground) / var(--un-text-opacity, 1));
+  word-break: break-word;
 }
 .dark {
   .astro-code pre span {
@@ -154,7 +183,7 @@ span.katex-display {
     right: 0.75rem;
     user-select: none;
     & .success::before {
-      content: 'Copied!';
+      content: "Copied!";
       position: absolute;
       right: 100%;
       top: 0;
@@ -205,14 +234,14 @@ span.katex-display {
       background-color: rgba(244, 63, 94, 0.16);
       &::before {
         background-color: rgba(244, 63, 94, 0.16);
-        content: '-';
+        content: "-";
       }
     }
     &.add {
       background-color: rgba(16, 185, 129, 0.16);
       &::before {
         background-color: rgba(16, 185, 129, 0.16);
-        content: '+';
+        content: "+";
       }
     }
   }
@@ -230,7 +259,7 @@ span.katex-display {
     margin: 0;
     border-top: 1px solid hsl(var(--border) / var(--un-border-opacity, 1));
     & .desc::before {
-      content: 'Collapse';
+      content: "Collapse";
     }
     & svg {
       transition: transform 0.2s ease;
@@ -246,7 +275,7 @@ span.katex-display {
       margin: 0.5rem;
       border: 1px solid hsl(var(--border) / var(--un-border-opacity, 1));
       & .desc::before {
-        content: 'Show all';
+        content: "Show all";
       }
       & svg {
         transform: rotate(0deg);
