@@ -1,0 +1,90 @@
+---
+import PageLayout from '@/layouts/CommonPage.astro'
+
+const headings = [
+  { depth: 2, slug: 'about-me', text: 'About Me' },
+  { depth: 2, slug: 'skills', text: 'Skills' },
+  { depth: 2, slug: 'experience', text: 'Experience' },
+  { depth: 2, slug: 'education', text: 'Education' },
+  { depth: 2, slug: 'contact', text: 'Contact' }
+]
+
+const skills = {
+  frontend: ['HTML', 'CSS', 'JavaScript', 'TypeScript', 'React', 'Astro', 'TailwindCSS'],
+  backend: ['Node.js', 'Express', 'Django', 'Flask', 'PHP', 'Laravel'],
+  security: ['Web Security', 'Penetration Testing', 'CTF', 'Network Security'],
+  design: ['After Effects', 'Premiere Pro', 'Photoshop', 'Illustrator', 'Figma', 'UI/UX Design']
+}
+
+const experiences = [
+  {
+    position: 'Junior Cyber Security Business Development Officer',
+    company: 'DTECHCORP Konsultindo Prima',
+    period: 'Jul 2025 - Present',
+    description:
+      'Identified cybersecurity market opportunities, presented tailored solutions to clients, and supported strategic sales development.'
+  },
+  {
+    position: 'Junior Cyber Security',
+    company: 'VINIX7',
+    period: 'Feb 2025 - Jun 2025',
+    description: 'Learned cybersecurity fundamentals through practical training and team collaboration.'
+  },
+  {
+    position: 'Computer Lab Assistant & Website Manager',
+    company: 'ICT Center - Universitas Sebelas Maret',
+    period: '2024',
+    description:
+      'Maintained lab computers, managed WordPress-based websites, and produced supporting design assets.'
+  }
+]
+---
+
+<PageLayout title='About' {headings}>
+  <h2 id='about-me'>About Me</h2>
+  <p>
+    Hi! I’m Gafna Al Faatiha Prabowo, a web developer, CTF player, and motion designer based in
+    Surakarta, Indonesia.
+  </p>
+  <p>
+    I enjoy building fast and clean web applications, solving cybersecurity challenges, and creating
+    visuals with a strong communication focus.
+  </p>
+
+  <h2 id='skills'>Skills</h2>
+  <h3>Front-end</h3>
+  <p>{skills.frontend.join(' • ')}</p>
+  <h3>Back-end</h3>
+  <p>{skills.backend.join(' • ')}</p>
+  <h3>Security</h3>
+  <p>{skills.security.join(' • ')}</p>
+  <h3>Design</h3>
+  <p>{skills.design.join(' • ')}</p>
+
+  <h2 id='experience'>Experience</h2>
+  <ul>
+    {experiences.map((exp) => (
+      <li>
+        <strong>{exp.position}</strong> — {exp.company} ({exp.period})<br />
+        {exp.description}
+      </li>
+    ))}
+  </ul>
+
+  <h2 id='education'>Education</h2>
+  <p>
+    <strong>Bachelor of Computer Science</strong><br />
+    Gadjah Mada University (2023 - Present)
+  </p>
+
+  <h2 id='contact'>Contact</h2>
+  <ul>
+    <li><a href='mailto:gafnaalfaatihaprabowo@mail.ugm.ac.id'>gafnaalfaatihaprabowo@mail.ugm.ac.id</a></li>
+    <li><a href='mailto:gafnaalfaatiha@gmail.com'>gafnaalfaatiha@gmail.com</a></li>
+    <li><a href='https://github.com/gafnaa' target='_blank'>GitHub</a></li>
+    <li><a href='https://www.linkedin.com/in/gafnaa/' target='_blank'>LinkedIn</a></li>
+    <li><a href='https://www.instagram.com/g.fnaa/' target='_blank'>Instagram</a></li>
+  </ul>
+</PageLayout>
+
+

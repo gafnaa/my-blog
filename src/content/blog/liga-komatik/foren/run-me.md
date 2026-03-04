@@ -1,10 +1,12 @@
 ---
 title: "run_me.png"
 description: ""
-pubDate: 2025-07-13 21:00
+publishDate: "2025-07-13T21:00:00+07:00"
 category: "Forensic"
 event: "Liga Komatik"
-heroImage: ""
+tags:
+  - "forensic"
+  - "liga-komatik"
 ---
 
 ## run_me.png

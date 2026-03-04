@@ -1,10 +1,12 @@
 ---
 title: "From Caesar to Cleo"
 description: ""
-pubDate: 2025-07-13 21:00
+publishDate: "2025-07-13T21:00:00+07:00"
 category: "Cypto"
 event: "FIT Competition"
-heroImage: ""
+tags:
+  - "cypto"
+  - "fit-competition"
 ---
 
 ## From Caesar to Cleo

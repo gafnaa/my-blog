@@ -1,11 +1,14 @@
 ---
 title: "Dessert Time (BCACTF)"
 description: "Reconstructing the flag by analyzing a schedule in Google Sheets."
-pubDate: 2025-07-14 19:00:00
+publishDate: "2025-07-14T19:00:00+07:00"
 category: "Misc"
-type: "writeup"
 event: "BCACTF"
-heroImage: ""
+type: "writeup"
+tags:
+  - "misc"
+  - "bcactf"
+  - "writeup"
 ---
 
 ## Desert Time

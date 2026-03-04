@@ -1,10 +1,13 @@
 ---
 title: "CTF Field Notes"
 description: "A personal collection of techniques, payloads, and specialized commands for various Capture The Flag challenges."
-pubDate: 2025-07-25 10:00:00
+publishDate: "2025-07-25T10:00:00+07:00"
 slug: "ctf-notes"
 category: "Web Exploitation"
 type: "note"
+tags:
+  - "web-exploitation"
+  - "note"
 ---
 
 - [Web](#web)

@@ -1,10 +1,12 @@
 ---
 title: "The Power of Logs"
 description: ""
-pubDate: 2025-07-13 21:00
+publishDate: "2025-07-13T21:00:00+07:00"
 category: "Misc"
 event: "FIT Competition"
-heroImage: ""
+tags:
+  - "misc"
+  - "fit-competition"
 ---
 
 ## The Power of Logs

@@ -1,10 +1,12 @@
 ---
 title: "expletive"
 description: ""
-pubDate: 2025-07-14 19:00
+publishDate: "2025-07-14T19:00:00+07:00"
 category: "Misc"
 event: "BCACTF"
-heroImage: ""
+tags:
+  - "misc"
+  - "bcactf"
 ---
 
 ## Expletive
