@@ -1,46 +1,86 @@
 ---
 import type { GetStaticPaths, Page } from 'astro'
-import type { CollectionEntry } from 'astro:content'
+import { getCollection } from 'astro:content'
 
-import { Paginator, PostPreview } from 'astro-pure/components/pages'
-import { getBlogCollection, sortMDByDate } from 'astro-pure/server'
+import { Paginator } from 'astro-pure/components/pages'
 import { Button } from 'astro-pure/user'
 import PageLayout from '@/layouts/BaseLayout.astro'
 import config from '@/site-config'
 
 export const prerender = true
 
+interface EventItem {
+  name: string
+  slug: string
+  latestPublishDate: Date
+}
+
 export const getStaticPaths = (async ({ paginate }) => {
-  const collections = sortMDByDate(await getBlogCollection())
-  const collectionsCount = collections.length
-  return paginate(collections, {
+  const eventToSlug = (eventName: string) =>
+    eventName
+      .trim()
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '')
+
+  const collections = (await getCollection('blog')).sort(
+    (a, b) => b.data.publishDate.getTime() - a.data.publishDate.getTime()
+  )
+
+  const eventsMap = new Map<string, EventItem>()
+
+  for (const post of collections) {
+    const eventName = post.data.event?.trim()
+    if (!eventName) continue
+
+    if (!eventsMap.has(eventName)) {
+      eventsMap.set(eventName, {
+        name: eventName,
+        slug: eventToSlug(eventName),
+        latestPublishDate: post.data.publishDate
+      })
+    }
+
+    const existingEvent = eventsMap.get(eventName)
+    if (existingEvent) {
+      if (post.data.publishDate > existingEvent.latestPublishDate) {
+        existingEvent.latestPublishDate = post.data.publishDate
+      }
+    }
+  }
+
+  const events = Array.from(eventsMap.values()).sort(
+    (a, b) => b.latestPublishDate.getTime() - a.latestPublishDate.getTime()
+  )
+
+  return paginate(events, {
     pageSize: config.content.blogPageSize,
-    props: { collectionsCount }
+    props: { eventsCount: events.length }
   })
 }) satisfies GetStaticPaths
 
 interface Props {
-  page: Page<CollectionEntry<'blog'>>
-  collectionsCount: number
+  page: Page<EventItem>
+  eventsCount: number
 }
 
-const { page, collectionsCount } = Astro.props
+const { page, eventsCount } = Astro.props
 
 const meta = {
-  description: 'Some posts or archives of my blog',
+  description: 'CTF events list',
   title: 'Blog'
 }
 
 const paginationProps = {
   ...(page.url.prev && {
     prevUrl: {
-      text: `← Previous Posts`,
+      text: `← Previous Events`,
       url: page.url.prev
     }
   }),
   ...(page.url.next && {
     nextUrl: {
-      text: `Next Posts →`,
+      text: `Next Events →`,
       url: page.url.next
     }
   })
@@ -51,23 +91,29 @@ const paginationProps = {
   <Button title='Back' href='/' variant='back' />
   <main class='mt-6 lg:mt-10'>
     <div id='content-header' class='animate'>
-      <h1 class='mb-6 mt-6 text-3xl font-medium sm:mt-10'>Blog</h1>
+      <h1 class='mb-6 mt-6 text-3xl font-medium sm:mt-10'>Blog Events</h1>
     </div>
     {
       page.data.length === 0 ? (
-        <p>No posts yet.</p>
+        <p>No CTF event yet.</p>
       ) : (
-        <section aria-label='Blog posts list' class='animate' id='content'>
-          {/* header */}
+        <section aria-label='CTF events list' class='animate' id='content'>
           <div class='mb-3 text-sm sm:mb-5'>
             <span class='text-muted-foreground'>
-              Page {page.currentPage} - Showing {page.data.length} of {collectionsCount} posts
+              Page {page.currentPage} - Showing {page.data.length} of {eventsCount} events
             </span>
           </div>
-          {/* posts */}
-          <ul class='flex flex-col gap-y-4 text-start'>
-            {page.data.map((post) => (
-              <PostPreview {post} detailed />
+
+          <ul class='flex flex-col gap-y-3 text-start'>
+            {page.data.map((event) => (
+              <li>
+                <a
+                  class='block rounded-xl border border-border bg-muted/30 px-4 py-3 text-base font-medium transition hover:border-primary hover:text-primary'
+                  href={`/blog/event/${event.slug}`}
+                >
+                  {event.name}
+                </a>
+              </li>
             ))}
           </ul>
           <Paginator {...paginationProps} />
