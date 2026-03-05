@@ -50,7 +50,9 @@ jobs:
           jq -n \
             --arg diff "$DIFF" \
             '{contents:[{parts:[{text: ("You are a senior software engineer.\nReview the following code changes and generate a professional Pull Request description in Markdown format.\n" +
-            "The output MUST start with the Title on the first line, formatted as `Title: <Concise Imperative Title>`.\n" +
+            "The output MUST start with the Title on the first line, formatted as `Title: <type>: <Concise Title>`.\n" +
+            "Use Conventional Commit type prefix for `<type>` with one of: feat, fix, chore, docs, style, refactor, perf, test, build, ci, revert.\n" +
+            "Examples: `Title: feat: add event-based blog navigation`, `Title: chore: update workflow prompt`.\n" +
             "Followed by a blank line, and then the detailed description body.\n\n" +
             "Description Structure:\n" +
             "1. **Summary**: A high-level overview.\n" +
@@ -99,6 +101,7 @@ jobs:
           script: |
             const result = process.env.RESULT || "Auto generated PR message failed.";
             const lines = result.split("\n");
+            const conventionalTitleRegex = /^(feat|fix|chore|docs|style|refactor|perf|test|build|ci|revert)(\([^)]+\))?:\s+.+$/i;
 
             let title = "";
             let body = result;
@@ -112,6 +115,19 @@ jobs:
               body = lines.slice(1).join("\n").trim();
             }
 
+            // Enforce Conventional Commit style title for PR title
+            if (title && !conventionalTitleRegex.test(title)) {
+              title = `chore: ${title.replace(/^:+\s*/, "").trim()}`;
+            }
+
+            // If Gemini didn't provide a title, normalize current PR title
+            if (!title) {
+              const currentTitle = (context.payload.pull_request?.title || "auto update").trim();
+              title = conventionalTitleRegex.test(currentTitle)
+                ? currentTitle
+                : `chore: ${currentTitle}`;
+            }
+
             const updateParams = {
               owner: context.repo.owner,
               repo: context.repo.repo,
@@ -119,9 +135,7 @@ jobs:
               body: body
             };
 
-            // Only update title if we extracted one
-            if (title) {
-              updateParams.title = title;
-            }
+            // Always update title to keep Conventional Commit format
+            updateParams.title = title;
 
             await github.rest.pulls.update(updateParams);
