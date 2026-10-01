@@ -1,6 +1,7 @@
 ---
-import { Footer, Header, ThemeProvider } from 'astro-pure/components/basic'
+import { Header, ThemeProvider } from 'astro-pure/components/basic'
 import type { SiteMeta } from 'astro-pure/types'
+import { Icon } from 'astro-pure/user'
 import BaseHead from '@/components/BaseHead.astro'
 import config from '@/site-config'
 
@@ -45,7 +46,20 @@ const {
       <div class='flex-1 w-full'>
         <slot />
       </div>
-      <Footer />
+      <footer class='mx-auto mb-5 mt-16 w-full border-t pt-5'>
+        <div class='flex items-center justify-between text-muted-foreground'>
+          <span>© 2026 {config.author}</span>
+          <a
+            href='https://github.com/gafnaa'
+            target='_blank'
+            rel='noopener noreferrer'
+            aria-label='GitHub'
+            class='text-foreground'
+          >
+            <Icon name='github' class='size-5' />
+          </a>
+        </div>
+      </footer>
     </div>
 
     {/* Set highlight color */}

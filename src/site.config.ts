@@ -44,19 +44,8 @@ export const theme: ThemeUserConfig = {
   },
 
   footer: {
-    year: `© ${new Date().getFullYear()}`,
-    links: [
-      {
-        title: "RSS",
-        link: "/rss.xml",
-      },
-      {
-        title: "Terms",
-        link: "/terms",
-        pos: 2,
-      },
-    ],
-    credits: true,
+    year: "© 2026",
+    credits: false,
     social: {
       github: "https://github.com/gafnaa",
     },
