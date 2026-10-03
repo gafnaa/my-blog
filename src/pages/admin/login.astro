@@ -1,0 +1,90 @@
+---
+import BaseLayout from '@/layouts/BaseLayout.astro'
+---
+
+<BaseLayout meta={{ title: 'Admin login', description: 'Sign in to manage the Library.' }}>
+  <main class='login-shell'>
+    <section class='login-card' aria-labelledby='login-title'>
+      <header class='card-heading'>
+        <h1 id='login-title'>Welcome back</h1>
+        <p class='login-description'>Sign in to manage your books and games.</p>
+      </header>
+      <form id='login-form' class='admin-form'>
+        <label for='email'>Email address</label>
+        <input id='email' name='email' type='email' placeholder='name@example.com' autocomplete='username' required />
+        <label for='password'>Password</label>
+        <div class='password-field'>
+          <input id='password' name='password' type='password' placeholder='Enter your password' autocomplete='current-password' required />
+          <button class='password-toggle' id='password-toggle' type='button' aria-label='Show password' aria-pressed='false'>
+            <svg viewBox='0 0 24 24' aria-hidden='true'><path d='M2.5 12s3.4-6 9.5-6 9.5 6 9.5 6-3.4 6-9.5 6-9.5-6-9.5-6Z'/><circle cx='12' cy='12' r='2.5'/></svg>
+          </button>
+        </div>
+        <button class='submit-button' type='submit'><span>Sign in</span></button>
+        <p id='login-message' role='status' aria-live='polite'></p>
+      </form>
+      <div class='secure-note'>
+        <svg viewBox='0 0 20 20' aria-hidden='true'><rect x='4.5' y='8.5' width='11' height='8' rx='1.5'/><path d='M7 8.5V6a3 3 0 0 1 6 0v2.5'/></svg>
+        <span>Secure admin access</span>
+      </div>
+    </section>
+  </main>
+</BaseLayout>
+
+<script>
+  const form = document.querySelector<HTMLFormElement>('#login-form')!
+  const message = document.querySelector<HTMLElement>('#login-message')!
+  const submit = form.querySelector<HTMLButtonElement>('.submit-button')!
+  const password = form.querySelector<HTMLInputElement>('#password')!
+  const passwordToggle = form.querySelector<HTMLButtonElement>('#password-toggle')!
+  const config = { url: import.meta.env.PUBLIC_SUPABASE_URL, key: import.meta.env.PUBLIC_SUPABASE_ANON_KEY }
+  passwordToggle.addEventListener('click', () => {
+    const showing = password.type === 'password'
+    password.type = showing ? 'text' : 'password'
+    passwordToggle.setAttribute('aria-label', showing ? 'Hide password' : 'Show password')
+    passwordToggle.setAttribute('aria-pressed', String(showing))
+  })
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault()
+    if (!config.url || !config.key) { message.textContent = 'Admin is not configured yet. Add Supabase environment variables.'; return }
+    const data = new FormData(form)
+    submit.disabled = true
+    submit.querySelector('span')!.textContent = 'Signing in…'
+    message.textContent = ''
+    try {
+      const response = await fetch(`${config.url}/auth/v1/token?grant_type=password`, { method: 'POST', headers: { 'Content-Type': 'application/json', apikey: config.key }, body: JSON.stringify({ email: data.get('email'), password: data.get('password') }) })
+      const result = await response.json()
+      if (!response.ok) throw new Error(result.msg || result.message || 'Sign in failed')
+      sessionStorage.setItem('library-admin-session', JSON.stringify(result))
+      location.href = '/admin'
+    } catch (error) {
+      message.textContent = error instanceof Error ? error.message : 'Sign in failed'
+      submit.disabled = false
+      submit.querySelector('span')!.textContent = 'Sign in'
+    }
+  })
+</script>
+
+<style>
+  .login-shell { display: grid; min-height: clamp(34rem, calc(100svh - 13rem), 54rem); place-items: center; padding: 2.5rem 1rem; }
+  .login-card { width: min(100%, 28rem); padding: 1.5rem; border: 1px solid hsl(var(--border)); border-radius: var(--radius); background: hsl(var(--background)); box-shadow: 0 1px 2px hsl(var(--foreground) / 0.04), 0 10px 28px -24px hsl(var(--foreground) / 0.25); }
+  .card-heading { padding: 1.5rem 0 1.1rem; text-align: center; }
+  h1 { margin: 0; font-size: 1.5rem; font-weight: 600; letter-spacing: -0.035em; line-height: 1.25; }
+  .login-description { margin: 0.45rem 0 0; color: hsl(var(--muted-foreground)); font-size: 0.9rem; line-height: 1.5; }
+  .admin-form { display: grid; gap: 0.55rem; }
+  .admin-form label { margin-top: 0.45rem; font-size: 0.85rem; font-weight: 500; }
+  .admin-form input { width: 100%; height: 2.55rem; padding: 0 0.75rem; border: 1px solid hsl(var(--input)); border-radius: calc(var(--radius) - 0.125rem); outline: none; background: hsl(var(--background)); color: hsl(var(--foreground)); font: inherit; font-size: 0.875rem; transition: border-color 150ms, box-shadow 150ms; }
+  .admin-form input::placeholder { color: hsl(var(--muted-foreground) / 0.75); }
+  .admin-form input:focus { border-color: hsl(var(--ring)); box-shadow: 0 0 0 3px hsl(var(--ring) / 0.14); }
+  .password-field { position: relative; }
+  .password-field input { padding-right: 2.7rem; }
+  .password-toggle { position: absolute; top: 50%; right: 0.4rem; display: grid; width: 1.9rem; height: 1.9rem; transform: translateY(-50%); place-items: center; border: 0; border-radius: 0.3rem; background: transparent; color: hsl(var(--muted-foreground)); cursor: pointer; }
+  .password-toggle:hover { background: hsl(var(--muted)); color: hsl(var(--foreground)); }
+  .password-toggle svg { width: 1rem; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.6; }
+  .submit-button { display: grid; width: 100%; height: 2.6rem; place-items: center; margin-top: 0.8rem; padding: 0 0.85rem; border: 1px solid hsl(var(--primary)); border-radius: calc(var(--radius) - 0.125rem); background: hsl(var(--primary)); color: hsl(var(--background)); font: inherit; font-size: 0.9rem; font-weight: 550; cursor: pointer; transition: opacity 150ms; }
+  .submit-button:hover:not(:disabled) { opacity: 0.88; }
+  .submit-button:disabled { cursor: wait; opacity: 0.7; }
+  #login-message { min-height: 1.2rem; margin: 0.25rem 0 0; color: #b42318; font-size: 0.8rem; line-height: 1.5; }
+  .secure-note { display: flex; align-items: center; justify-content: center; gap: 0.4rem; margin: 1rem 0 0; padding-top: 0.9rem; border-top: 1px solid hsl(var(--border)); color: hsl(var(--muted-foreground)); font-size: 0.75rem; text-align: center; }
+  .secure-note svg { width: 0.9rem; fill: none; stroke: currentColor; stroke-linecap: round; stroke-linejoin: round; stroke-width: 1.4; }
+  @media (max-width: 480px) { .login-shell { min-height: calc(100svh - 13rem); padding: 1.5rem 0.25rem; }.login-card { padding: 1.2rem; } }
+</style>
