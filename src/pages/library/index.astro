@@ -1,0 +1,124 @@
+---
+import PageLayout from '@/layouts/CommonPage.astro'
+
+type Favorite = {
+  title: string
+  creator: string
+  type: 'Game' | 'Book'
+  rating: number
+  description: string
+  image: string
+  imageAlt: string
+}
+
+// Add or edit favorites here. Image URLs can point to local files in /public or remote covers.
+const favorites: Favorite[] = [
+  {
+    title: 'The Legend of Zelda: Breath of the Wild',
+    creator: 'Nintendo',
+    type: 'Game',
+    rating: 5,
+    description: 'A beautiful, open-ended adventure that makes every quiet discovery feel like its own little story.',
+    image: 'https://images.igdb.com/igdb/image/upload/t_cover_big/co3p2d.jpg',
+    imageAlt: 'Breath of the Wild game cover',
+  },
+  {
+    title: 'The Little Prince',
+    creator: 'Antoine de Saint-Exupéry',
+    type: 'Book',
+    rating: 5,
+    description: 'A tender, thoughtful reminder to look beyond what is immediately visible.',
+    image: 'https://covers.openlibrary.org/b/isbn/9780156012195-L.jpg',
+    imageAlt: 'The Little Prince book cover',
+  },
+  {
+    title: 'Stardew Valley',
+    creator: 'ConcernedApe',
+    type: 'Game',
+    rating: 4,
+    description: 'A cozy, endlessly charming escape where there is always one more thing to do tomorrow.',
+    image: 'https://images.igdb.com/igdb/image/upload/t_cover_big/co1x7d.jpg',
+    imageAlt: 'Stardew Valley game cover',
+  },
+  {
+    title: 'The Midnight Library',
+    creator: 'Matt Haig',
+    type: 'Book',
+    rating: 4,
+    description: 'An imaginative and heartfelt story about second chances and making peace with the life you have.',
+    image: 'https://covers.openlibrary.org/b/isbn/9780525559474-L.jpg',
+    imageAlt: 'The Midnight Library book cover',
+  },
+]
+
+const headings = [
+  { depth: 2, slug: 'favorites', text: 'The collection' },
+]
+---
+
+<PageLayout title='Books & Games' {headings}>
+  <div class='library-intro'>
+    <span class='library-eyebrow'>A PERSONAL COLLECTION</span>
+    <p class='library-lede'>Stories I’ve stepped into, worlds I’ve explored, and a few thoughts on each.</p>
+    <div class='library-counts' aria-label={`${favorites.length} favorites`}>
+      <span><strong>{favorites.filter((item) => item.type === 'Book').length}</strong> books</span>
+      <span class='count-divider' aria-hidden='true'>/</span>
+      <span><strong>{favorites.filter((item) => item.type === 'Game').length}</strong> games</span>
+    </div>
+  </div>
+
+  <h2 id='favorites' class='collection-heading'>The collection <span>— currently loving</span></h2>
+  <div class='favorite-grid'>
+    {favorites.map((item) => (
+      <article class='favorite-card'>
+        <div class='cover-wrap'>
+          <img src={item.image} alt={item.imageAlt} loading='lazy' />
+          <span class:list={['type-badge', item.type.toLowerCase()]}>{item.type}</span>
+        </div>
+        <div class='card-copy'>
+          <div class='rating' aria-label={`${item.rating} out of 5 stars`}>
+            {Array.from({ length: 5 }, (_, index) => (
+              <span class={index < item.rating ? 'star filled' : 'star'} aria-hidden='true'>★</span>
+            ))}
+          </div>
+          <h3>{item.title}</h3>
+          <p class='creator'>{item.creator}</p>
+          <p class='review'>{item.description}</p>
+        </div>
+      </article>
+    ))}
+  </div>
+</PageLayout>
+
+<style>
+  .library-intro {
+    margin: 1.5rem 0 2.5rem;
+    padding: 1.5rem 1.6rem;
+    border: 1px solid hsl(var(--border));
+    border-radius: 1rem;
+    background: linear-gradient(135deg, hsl(var(--muted) / 0.65), transparent 75%);
+  }
+  .library-eyebrow { color: hsl(var(--primary)); font-size: 0.7rem; font-weight: 700; letter-spacing: 0.16em; }
+  .library-lede { max-width: 36rem; margin: 0.65rem 0 1.1rem; color: hsl(var(--muted-foreground)); font-size: 1.05rem; line-height: 1.7; }
+  .library-counts { display: flex; align-items: center; gap: 0.65rem; color: hsl(var(--muted-foreground)); font-size: 0.85rem; }
+  .library-counts strong { color: hsl(var(--foreground)); }
+  .count-divider { opacity: 0.45; }
+  .collection-heading { margin-bottom: 1rem; }
+  .collection-heading span { color: hsl(var(--muted-foreground)); font-size: 0.8em; font-weight: 400; }
+  .favorite-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem; }
+  .favorite-card { display: grid; grid-template-columns: 7rem minmax(0, 1fr); gap: 1rem; overflow: hidden; padding: 0.8rem; border: 1px solid hsl(var(--border)); border-radius: 0.85rem; background: hsl(var(--background) / 0.65); transition: border-color 160ms ease, transform 160ms ease; }
+  .favorite-card:hover { transform: translateY(-2px); border-color: hsl(var(--primary) / 0.55); }
+  .cover-wrap { position: relative; min-height: 10rem; overflow: hidden; border-radius: 0.55rem; background: hsl(var(--muted)); }
+  .cover-wrap img { width: 100%; height: 100%; min-height: 10rem; object-fit: cover; }
+  .type-badge { position: absolute; top: 0.45rem; left: 0.45rem; padding: 0.2rem 0.5rem; border: 1px solid hsl(var(--border) / 0.7); border-radius: 999px; background: hsl(var(--background) / 0.88); color: hsl(var(--foreground)); font-size: 0.65rem; font-weight: 600; backdrop-filter: blur(8px); }
+  .type-badge.game { color: hsl(var(--primary)); }
+  .card-copy { align-self: center; min-width: 0; padding: 0.2rem 0.15rem 0.2rem 0; }
+  .rating { display: flex; gap: 0.08rem; margin-bottom: 0.35rem; }
+  .star { color: hsl(var(--muted-foreground) / 0.32); font-size: 0.85rem; }
+  .star.filled { color: #e9ad48; }
+  .card-copy h3 { margin: 0; font-size: 0.98rem; line-height: 1.35; }
+  .creator { margin: 0.2rem 0 0.55rem; color: hsl(var(--muted-foreground)); font-size: 0.76rem; }
+  .review { margin: 0; color: hsl(var(--muted-foreground)); font-size: 0.8rem; line-height: 1.55; }
+  @media (max-width: 700px) { .favorite-grid { grid-template-columns: 1fr; } }
+  @media (max-width: 420px) { .favorite-card { grid-template-columns: 6rem minmax(0, 1fr); gap: 0.75rem; padding: 0.65rem; } .cover-wrap, .cover-wrap img { min-height: 9rem; } .review { font-size: 0.76rem; } }
+</style>
