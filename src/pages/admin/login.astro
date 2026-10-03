@@ -31,12 +31,13 @@ import BaseLayout from '@/layouts/BaseLayout.astro'
 </BaseLayout>
 
 <script>
+  import { supabase } from '../../db/supabase.js'
+
   const form = document.querySelector<HTMLFormElement>('#login-form')!
   const message = document.querySelector<HTMLElement>('#login-message')!
   const submit = form.querySelector<HTMLButtonElement>('.submit-button')!
   const password = form.querySelector<HTMLInputElement>('#password')!
   const passwordToggle = form.querySelector<HTMLButtonElement>('#password-toggle')!
-  const config = { url: import.meta.env.PUBLIC_SUPABASE_URL, key: import.meta.env.PUBLIC_SUPABASE_ANON_KEY }
   passwordToggle.addEventListener('click', () => {
     const showing = password.type === 'password'
     password.type = showing ? 'text' : 'password'
@@ -45,16 +46,14 @@ import BaseLayout from '@/layouts/BaseLayout.astro'
   })
   form.addEventListener('submit', async (event) => {
     event.preventDefault()
-    if (!config.url || !config.key) { message.textContent = 'Admin is not configured yet. Add Supabase environment variables.'; return }
     const data = new FormData(form)
     submit.disabled = true
     submit.querySelector('span')!.textContent = 'Signing in…'
     message.textContent = ''
     try {
-      const response = await fetch(`${config.url}/auth/v1/token?grant_type=password`, { method: 'POST', headers: { 'Content-Type': 'application/json', apikey: config.key }, body: JSON.stringify({ email: data.get('email'), password: data.get('password') }) })
-      const result = await response.json()
-      if (!response.ok) throw new Error(result.msg || result.message || 'Sign in failed')
-      sessionStorage.setItem('library-admin-session', JSON.stringify(result))
+      const { data: authData, error } = await supabase.auth.signInWithPassword({ email: String(data.get('email')), password: String(data.get('password')) })
+      if (error) throw error
+      sessionStorage.setItem('library-admin-session', JSON.stringify(authData.session))
       location.href = '/admin'
     } catch (error) {
       message.textContent = error instanceof Error ? error.message : 'Sign in failed'
