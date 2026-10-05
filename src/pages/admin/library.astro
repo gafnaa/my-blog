@@ -1,0 +1,99 @@
+---
+import AdminLayout from '@/layouts/AdminLayout.astro'
+---
+
+<AdminLayout title="Library" active="library">
+  <section class='admin-dashboard'>
+    <header class="library-heading"><div><p>YOUR COLLECTION</p><h1>Library</h1><span>Manage the books and games on your public shelf.</span></div><a href="#entry-form" class="add-entry">＋ Add entry</a></header>
+    <form id='entry-form' class='admin-form'>
+      <input name='id' type='hidden' />
+      <label>Type<select name='type'><option>Game</option><option>Book</option></select></label>
+      <label>Find a title<input id='catalog-search' type='search' placeholder='Search books or games…' /><span id='search-status' role='status'></span></label>
+      <div id='search-results' class='search-results'></div>
+      <label>Title<input name='title' required /></label>
+      <label>Creator / author / studio<input name='creator' required /></label>
+      <label>Cover image URL<input name='image' type='url' required /></label>
+      <label>Rating<select name='rating'>{[1,2,3,4,5].map((rating) => <option value={rating}>{rating} star{rating > 1 ? 's' : ''}</option>)}</select></label>
+      <label>Short review<textarea name='description' rows='3' required></textarea></label>
+      <div class='form-actions'><button type='submit'>Save entry</button><button id='cancel-edit' type='button' hidden>Cancel edit</button></div>
+      <p id='form-message' role='status'></p>
+    </form>
+    <div class="entries-heading"><div><h2>Your entries</h2><p>Everything currently on your public shelf</p></div><a href="/library">View public library ↗</a></div>
+    <div id='entries-list' class='entries-list'>Loading…</div>
+  </section>
+</AdminLayout>
+
+<script>
+  const config = { url: import.meta.env.PUBLIC_SUPABASE_URL, key: import.meta.env.PUBLIC_SUPABASE_ANON_KEY, rawgKey: import.meta.env.PUBLIC_RAWG_API_KEY }
+  const sessionKey = 'library-admin-session'
+  const session = JSON.parse(sessionStorage.getItem(sessionKey) || 'null')
+  if (!session?.access_token || session.expires_at * 1000 < Date.now()) location.replace('/admin/login')
+  const form = document.querySelector<HTMLFormElement>('#entry-form')!
+  const list = document.querySelector<HTMLElement>('#entries-list')!
+  const message = document.querySelector<HTMLElement>('#form-message')!
+  const results = document.querySelector<HTMLElement>('#search-results')!
+  const headers = { apikey: config.key, Authorization: `Bearer ${session?.access_token}`, 'Content-Type': 'application/json' }
+  const api = `${config.url}/rest/v1/library`
+  const safe = (value: unknown) => String(value ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!)
+  const load = async () => {
+    const response = await fetch(`${api}?select=*&order=created_at.desc`, { headers })
+    if (!response.ok) { list.textContent = 'Could not load entries. Check your Supabase table and access policies.'; return }
+    const entries = await response.json()
+    list.innerHTML = entries.length ? entries.map((item: any) => `<article class="entry"><img src="${safe(item.image)}" alt=""><div><strong>${safe(item.title)}</strong><p>${safe(item.type)} · ${safe(item.creator)} · ${item.rating}/5</p></div><button data-edit="${safe(item.id)}">Edit</button><button data-delete="${safe(item.id)}">Delete</button></article>`).join('') : 'No entries yet.'
+    list.querySelectorAll<HTMLButtonElement>('[data-edit]').forEach((button) => button.addEventListener('click', () => { const item = entries.find((entry: any) => entry.id === button.dataset.edit); for (const [key, value] of Object.entries(item)) { const input = form.elements.namedItem(key) as HTMLInputElement | null; if (input) input.value = String(value ?? '') } form.scrollIntoView({ behavior: 'smooth' }); document.querySelector<HTMLButtonElement>('#cancel-edit')!.hidden = false }))
+    list.querySelectorAll<HTMLButtonElement>('[data-delete]').forEach((button) => button.addEventListener('click', async () => { if (!confirm('Delete this entry?')) return; const response = await fetch(`${api}?id=eq.${button.dataset.delete}`, { method: 'DELETE', headers }); if (response.ok) load(); else alert('Could not delete entry') }))
+  }
+  document.querySelector<HTMLButtonElement>('#cancel-edit')!.addEventListener('click', () => { form.reset(); (form.elements.namedItem('id') as HTMLInputElement).value = ''; document.querySelector<HTMLButtonElement>('#cancel-edit')!.hidden = true })
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault()
+    const data = Object.fromEntries(new FormData(form).entries())
+    const id = data.id
+    delete data.id
+    data.rating = String(Number(data.rating))
+    const response = await fetch(id ? `${api}?id=eq.${encodeURIComponent(String(id))}` : api, { method: id ? 'PATCH' : 'POST', headers: { ...headers, Prefer: 'return=minimal' }, body: JSON.stringify(data) })
+    message.textContent = response.ok ? 'Saved.' : 'Could not save. Check the Supabase setup and try again.'
+    if (response.ok) { form.reset(); (form.elements.namedItem('id') as HTMLInputElement).value = ''; document.querySelector<HTMLButtonElement>('#cancel-edit')!.hidden = true; await load() }
+  })
+  let searchTimer: number
+  document.querySelector<HTMLInputElement>('#catalog-search')!.addEventListener('input', (event) => {
+    window.clearTimeout(searchTimer)
+    const query = (event.currentTarget as HTMLInputElement).value.trim()
+    if (query.length < 2) { results.innerHTML = ''; return }
+    searchTimer = window.setTimeout(async () => {
+      const type = (form.elements.namedItem('type') as HTMLSelectElement).value
+      const status = document.querySelector<HTMLElement>('#search-status')!
+      status.textContent = 'Searching…'
+      try {
+        if (type === 'Game' && !config.rawgKey) { status.textContent = 'Add PUBLIC_RAWG_API_KEY to enable game search.'; return }
+        const endpoint = type === 'Book' ? `https://openlibrary.org/search.json?limit=6&title=${encodeURIComponent(query)}` : `https://api.rawg.io/api/games?key=${encodeURIComponent(config.rawgKey)}&page_size=6&search=${encodeURIComponent(query)}`
+        const response = await fetch(endpoint)
+        const data = await response.json()
+        const found = type === 'Book' ? (data.docs || []).map((book: any) => ({ title: book.title, creator: book.author_name?.[0] || '', image: book.cover_i ? `https://covers.openlibrary.org/b/id/${book.cover_i}-L.jpg` : '', description: '', imageAlt: `${book.title} cover` })) : (data.results || []).map((game: any) => ({ title: game.name, creator: game.developers?.[0]?.name || game.publishers?.[0]?.name || '', image: game.background_image || '', description: '', imageAlt: `${game.name} cover` }))
+        status.textContent = found.length ? 'Choose a result to fill in the title and cover.' : 'No results found.'
+        results.innerHTML = found.map((item: any, index: number) => `<button type="button" class="result" data-result="${index}">${safe(item.title)}${item.creator ? ` — ${safe(item.creator)}` : ''}</button>`).join('')
+        results.querySelectorAll<HTMLButtonElement>('[data-result]').forEach((button) => button.addEventListener('click', () => { const item = found[Number(button.dataset.result)]; for (const [key, value] of Object.entries(item)) { const input = form.elements.namedItem(key) as HTMLInputElement | null; if (input && value) input.value = String(value) } results.innerHTML = ''; status.textContent = 'Result selected. Add your rating and review.' }))
+      } catch { status.textContent = 'Catalog search is temporarily unavailable.' }
+    }, 350)
+  })
+  if (config.url && config.key && session?.access_token) load()
+</script>
+
+<style>
+  .admin-dashboard { max-width: 66rem; margin: 0 auto; padding-top: 2rem; }
+  .library-heading { display:flex; align-items:flex-end; justify-content:space-between; gap:1rem; margin-bottom:1.4rem; }.library-heading p { margin:0 0 .35rem; color:#849087; font-size:.66rem; font-weight:700; letter-spacing:.13em; }.library-heading h1 { margin:0; font-family:Georgia,serif; font-size:2rem; font-weight:500; letter-spacing:-.04em; }.library-heading span { display:block; margin-top:.4rem; color:#849087; font-size:.85rem; }.add-entry { padding:.65rem .85rem; border-radius:.45rem; background:#377662; color:white; font-size:.8rem; font-weight:600; text-decoration:none; }
+  .entries-heading { display:flex; justify-content:space-between; align-items:flex-end; margin:2rem 0 .8rem; }.entries-heading h2 { margin:0; font-family:Georgia,serif; font-size:1.3rem; font-weight:500; }.entries-heading p { margin:.3rem 0 0; color:#849087; font-size:.76rem; }.entries-heading a { color:#397661; font-size:.78rem; text-decoration:none; }
+  .dashboard-heading, .entry, .form-actions { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; }
+  .admin-form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.85rem; margin: 1.25rem 0 2rem; padding: 1.25rem; border: 1px solid hsl(var(--border)); border-radius: 0.85rem; }
+  .admin-form label { display: grid; gap: 0.35rem; font-size: 0.85rem; font-weight: 600; }
+  .admin-form label:nth-child(3), .admin-form label:nth-child(8), .form-actions, #form-message { grid-column: 1 / -1; }
+  .admin-form input, .admin-form select, .admin-form textarea { width: 100%; padding: 0.65rem; border: 1px solid hsl(var(--border)); border-radius: 0.45rem; background: hsl(var(--background)); color: hsl(var(--foreground)); }
+  button { padding: 0.5rem 0.8rem; border: 1px solid #e3e9e5; border-radius: 0.45rem; background: #f6f8f7; color: #34473e; cursor: pointer; }
+  .entries-list { display: grid; gap: 0.65rem; }
+  .entry { justify-content: flex-start; padding: 0.65rem; border: 1px solid hsl(var(--border)); border-radius: 0.6rem; }
+  .entry img { width: 2.8rem; height: 3.6rem; object-fit: cover; border-radius: 0.25rem; background: hsl(var(--muted)); }
+  .entry div { flex: 1; }.entry p { margin: 0.2rem 0 0; color: hsl(var(--muted-foreground)); font-size: 0.8rem; }
+  .search-results { grid-column: 1 / -1; display: grid; gap: 0.4rem; }.result { text-align: left; }
+  @media (max-width: 600px) { .admin-form { grid-template-columns: 1fr; }.admin-form label, .admin-form label:nth-child(3), .admin-form label:nth-child(8), .form-actions, #form-message { grid-column: 1; }.entry { flex-wrap: wrap; } }
+  .admin-form { background:#fff; border-color:#e7eaeb; }.admin-form input,.admin-form select,.admin-form textarea { border-color:#e3e9e5; background:#fff; color:#34473e; }.admin-form label { color:#526157; }.entries-list { overflow:hidden; border:1px solid #e7eaeb; border-radius:.65rem; background:white; }.entry { margin:0; border:0; border-bottom:1px solid #eff1f1; border-radius:0; }.entry:last-child { border-bottom:0; }.entry p { color:#849087; }
+  @media(max-width:520px) { .library-heading { align-items:flex-start; flex-direction:column; } .entries-heading { align-items:flex-start; gap:.6rem; flex-direction:column; } }
+</style>

@@ -1,0 +1,25 @@
+---
+import AdminLayout from '@/layouts/AdminLayout.astro'
+---
+<AdminLayout title="Settings" active="settings">
+  <section class="settings-page">
+    <header class="settings-heading"><p>WORKSPACE</p><h1>Settings</h1><span>Account and library workspace details.</span></header>
+    <section class="settings-section"><div class="section-title"><h2>Admin account</h2><p>Signed in account details for this workspace.</p></div><div class="settings-panel"><div class="setting-row"><span class="setting-avatar">A</span><div class="setting-copy"><strong id="account-email">Administrator</strong><span>Library administrator</span></div><span class="status-pill">Signed in</span></div><div class="setting-row"><div class="setting-symbol">◷</div><div class="setting-copy"><strong>Session</strong><span id="session-expiry">Checking session…</span></div></div></div></section>
+    <section class="settings-section"><div class="section-title"><h2>Library connection</h2><p>Connection status for the public collection and catalog search.</p></div><div class="settings-panel"><div class="setting-row"><div class="setting-symbol">▤</div><div class="setting-copy"><strong>Library database</strong><span>Your books and games are stored in Supabase.</span></div><span id="db-status" class="status-pill">Checking</span></div><div class="setting-row"><div class="setting-symbol">⌕</div><div class="setting-copy"><strong>Game catalog search</strong><span>Search RAWG while adding a game.</span></div><span id="catalog-status" class="status-pill">Checking</span></div></div></section>
+    <section class="settings-section"><div class="section-title"><h2>Public library</h2><p>Preview what visitors see on your shelf.</p></div><div class="settings-panel public-link"><div><strong>Books &amp; Games</strong><span>Your public library page</span></div><a href="/library">Open library ↗</a></div></section>
+  </section>
+</AdminLayout>
+<script>
+  const session = JSON.parse(sessionStorage.getItem('library-admin-session') || 'null')
+  if (!session?.access_token || session.expires_at * 1000 < Date.now()) location.replace('/admin/login')
+  document.querySelector('#account-email')!.textContent = session?.user?.email || 'Administrator'
+  document.querySelector('#session-expiry')!.textContent = session?.expires_at ? `Active until ${new Date(session.expires_at * 1000).toLocaleString()}` : 'Active browser session'
+  const mark = (selector: string, ready: boolean, yes: string, no: string) => { const el = document.querySelector<HTMLElement>(selector)!; el.textContent = ready ? yes : no; el.classList.toggle('ready', ready) }
+  mark('#db-status', Boolean(import.meta.env.PUBLIC_SUPABASE_URL && import.meta.env.PUBLIC_SUPABASE_ANON_KEY), 'Configured', 'Not configured')
+  mark('#catalog-status', Boolean(import.meta.env.PUBLIC_RAWG_API_KEY), 'Available', 'API key missing')
+</script>
+<style>
+  .settings-page { max-width:60rem; margin:0 auto; padding-top:2.2rem; }.settings-heading { margin-bottom:2rem; }.settings-heading p { margin:0 0 .35rem; color:#849087; font-size:.66rem; font-weight:700; letter-spacing:.13em; }.settings-heading h1 { margin:0; font-family:Georgia,serif; font-size:2rem; font-weight:500; letter-spacing:-.04em; }.settings-heading > span { display:block; margin-top:.4rem; color:#849087; font-size:.85rem; }
+  .settings-section { display:grid; grid-template-columns:12rem minmax(0,1fr); gap:1.2rem; margin-bottom:1.5rem; }.section-title h2 { margin:.25rem 0; color:#35443b; font-size:.9rem; font-weight:650; }.section-title p { margin:0; color:#8a948e; font-size:.75rem; line-height:1.55; }.settings-panel { overflow:hidden; border:1px solid #e7eaeb; border-radius:.65rem; background:white; }.setting-row { display:flex; min-height:4.3rem; align-items:center; gap:.8rem; padding:.7rem .9rem; border-bottom:1px solid #eff1f1; }.setting-row:last-child { border-bottom:0; }.setting-avatar,.setting-symbol { display:grid; width:2rem; height:2rem; flex:none; place-items:center; border-radius:.5rem; background:#eaf3ef; color:#397661; }.setting-avatar { border-radius:50%; background:#f1eade; color:#79684d; }.setting-copy { display:grid; flex:1; gap:.18rem; }.setting-copy strong,.public-link strong { color:#35443b; font-size:.8rem; font-weight:600; }.setting-copy span,.public-link span { color:#8a948e; font-size:.74rem; }.status-pill { padding:.3rem .55rem; border-radius:99px; background:#f5f0e5; color:#816d48; font-size:.67rem; white-space:nowrap; }.status-pill.ready { background:#eaf3ef; color:#397661; }.public-link { display:flex; min-height:4.3rem; align-items:center; justify-content:space-between; padding:.75rem .9rem; }.public-link div { display:grid; gap:.2rem; }.public-link a { color:#397661; font-size:.78rem; font-weight:600; text-decoration:none; }
+  @media(max-width:700px) { .settings-section { grid-template-columns:1fr; gap:.5rem; }.settings-page { padding-top:1.5rem; } }
+</style>

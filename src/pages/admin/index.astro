@@ -1,96 +1,69 @@
 ---
-import PageLayout from '@/layouts/CommonPage.astro'
+import AdminLayout from '@/layouts/AdminLayout.astro'
 ---
-
-<PageLayout title='Library dashboard'>
-  <section class='admin-dashboard'>
-    <div class='dashboard-heading'><p>Manage books and games shown on your public Library page.</p><button id='logout' type='button'>Sign out</button></div>
-    <form id='entry-form' class='admin-form'>
-      <input name='id' type='hidden' />
-      <label>Type<select name='type'><option>Game</option><option>Book</option></select></label>
-      <label>Find a title<input id='catalog-search' type='search' placeholder='Search books or games…' /><span id='search-status' role='status'></span></label>
-      <div id='search-results' class='search-results'></div>
-      <label>Title<input name='title' required /></label>
-      <label>Creator / author / studio<input name='creator' required /></label>
-      <label>Cover image URL<input name='image' type='url' required /></label>
-      <label>Rating<select name='rating'>{[1,2,3,4,5].map((rating) => <option value={rating}>{rating} star{rating > 1 ? 's' : ''}</option>)}</select></label>
-      <label>Short review<textarea name='description' rows='3' required></textarea></label>
-      <div class='form-actions'><button type='submit'>Save entry</button><button id='cancel-edit' type='button' hidden>Cancel edit</button></div>
-      <p id='form-message' role='status'></p>
-    </form>
-    <h2>Current entries</h2>
-    <div id='entries-list' class='entries-list'>Loading…</div>
+<AdminLayout title="Dashboard" active="dashboard">
+  <section class="dashboard">
+    <header class="page-heading"><div><p class="welcome">Good to see you</p><h1>Your shelf, at a glance.</h1><p class="intro">A quiet corner to keep the books and games you love.</p></div><a class="primary-action" href="/admin/library">＋ Add to library</a></header>
+    <div class="overview-grid">
+      <article class="overview-card"><span class="overview-icon book-icon">▤</span><div><p>Total collection</p><strong id="total-count">—</strong><small>Books and games</small></div></article>
+      <article class="overview-card"><span class="overview-icon game-icon">◈</span><div><p>Games</p><strong id="game-count">—</strong><small>In your collection</small></div></article>
+      <article class="overview-card"><span class="overview-icon books-icon">▥</span><div><p>Books</p><strong id="book-count">—</strong><small>On your reading shelf</small></div></article>
+      <article class="overview-card"><span class="overview-icon rating-icon">★</span><div><p>Average rating</p><strong id="average-rating">—</strong><small>Out of 5 stars</small></div></article>
+    </div>
+    <section class="recent-section"><div class="section-heading"><div><h2>Recently added</h2><p>Your latest additions to the shelf</p></div><a href="/admin/library">Manage library <span aria-hidden="true">↗</span></a></div><div id="recent-list" class="recent-list"><p class="loading">Loading your collection…</p></div></section>
+    <aside class="shelf-note"><span>✦</span><p><strong>A good collection keeps growing.</strong><br>Save a book or game you want to remember for later.</p><a href="/admin/library">Add something</a></aside>
   </section>
-</PageLayout>
-
+</AdminLayout>
 <script>
-  const config = { url: import.meta.env.PUBLIC_SUPABASE_URL, key: import.meta.env.PUBLIC_SUPABASE_ANON_KEY, rawgKey: import.meta.env.PUBLIC_RAWG_API_KEY }
-  const sessionKey = 'library-admin-session'
-  const session = JSON.parse(sessionStorage.getItem(sessionKey) || 'null')
+  const config = { url: import.meta.env.PUBLIC_SUPABASE_URL, key: import.meta.env.PUBLIC_SUPABASE_ANON_KEY }
+  const session = JSON.parse(sessionStorage.getItem('library-admin-session') || 'null')
   if (!session?.access_token || session.expires_at * 1000 < Date.now()) location.replace('/admin/login')
-  const form = document.querySelector<HTMLFormElement>('#entry-form')!
-  const list = document.querySelector<HTMLElement>('#entries-list')!
-  const message = document.querySelector<HTMLElement>('#form-message')!
-  const results = document.querySelector<HTMLElement>('#search-results')!
-  const headers = { apikey: config.key, Authorization: `Bearer ${session?.access_token}`, 'Content-Type': 'application/json' }
-  const api = `${config.url}/rest/v1/library`
+  const list = document.querySelector<HTMLElement>('#recent-list')!
   const safe = (value: unknown) => String(value ?? '').replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!)
   const load = async () => {
-    const response = await fetch(`${api}?select=*&order=created_at.desc`, { headers })
-    if (!response.ok) { list.textContent = 'Could not load entries. Check your Supabase table and access policies.'; return }
-    const entries = await response.json()
-    list.innerHTML = entries.length ? entries.map((item: any) => `<article class="entry"><img src="${safe(item.image)}" alt=""><div><strong>${safe(item.title)}</strong><p>${safe(item.type)} · ${safe(item.creator)} · ${item.rating}/5</p></div><button data-edit="${safe(item.id)}">Edit</button><button data-delete="${safe(item.id)}">Delete</button></article>`).join('') : 'No entries yet.'
-    list.querySelectorAll<HTMLButtonElement>('[data-edit]').forEach((button) => button.addEventListener('click', () => { const item = entries.find((entry: any) => entry.id === button.dataset.edit); for (const [key, value] of Object.entries(item)) { const input = form.elements.namedItem(key) as HTMLInputElement | null; if (input) input.value = String(value ?? '') } form.scrollIntoView({ behavior: 'smooth' }); document.querySelector<HTMLButtonElement>('#cancel-edit')!.hidden = false }))
-    list.querySelectorAll<HTMLButtonElement>('[data-delete]').forEach((button) => button.addEventListener('click', async () => { if (!confirm('Delete this entry?')) return; const response = await fetch(`${api}?id=eq.${button.dataset.delete}`, { method: 'DELETE', headers }); if (response.ok) load(); else alert('Could not delete entry') }))
+    if (!config.url || !config.key) { list.textContent = 'Add your Supabase configuration to load the collection.'; return }
+    try {
+      const response = await fetch(`${config.url}/rest/v1/library?select=*&order=created_at.desc`, { headers: { apikey: config.key, Authorization: `Bearer ${session.access_token}` } })
+      if (!response.ok) throw new Error()
+      const items = await response.json()
+      document.querySelector('#total-count')!.textContent = items.length
+      document.querySelector('#game-count')!.textContent = items.filter((item: any) => item.type === 'Game').length
+      document.querySelector('#book-count')!.textContent = items.filter((item: any) => item.type === 'Book').length
+      const average = items.length ? items.reduce((sum: number, item: any) => sum + Number(item.rating || 0), 0) / items.length : 0
+      document.querySelector('#average-rating')!.textContent = items.length ? average.toFixed(1) : '—'
+      list.innerHTML = items.slice(0, 5).map((item: any) => `<article class="recent-item"><img src="${safe(item.image)}" alt=""><div class="recent-copy"><strong>${safe(item.title)}</strong><span>${safe(item.creator)}</span></div><span class="item-type ${item.type === 'Game' ? 'game' : 'book'}">${safe(item.type)}</span><span class="item-rating">★ ${safe(item.rating)}</span></article>`).join('') || '<div class="empty-collection"><span>▤</span><p>Your library is waiting for its first addition.</p><a href="/admin/library">Add a book or game</a></div>'
+    } catch { list.textContent = 'Could not load the collection. Check your Supabase table and access policies.' }
   }
-  document.querySelector<HTMLButtonElement>('#logout')!.addEventListener('click', async () => { await fetch(`${config.url}/auth/v1/logout`, { method: 'POST', headers }); sessionStorage.removeItem(sessionKey); location.href = '/admin/login' })
-  document.querySelector<HTMLButtonElement>('#cancel-edit')!.addEventListener('click', () => { form.reset(); (form.elements.namedItem('id') as HTMLInputElement).value = ''; document.querySelector<HTMLButtonElement>('#cancel-edit')!.hidden = true })
-  form.addEventListener('submit', async (event) => {
-    event.preventDefault()
-    const data = Object.fromEntries(new FormData(form).entries())
-    const id = data.id
-    delete data.id
-    data.rating = String(Number(data.rating))
-    const response = await fetch(id ? `${api}?id=eq.${encodeURIComponent(String(id))}` : api, { method: id ? 'PATCH' : 'POST', headers: { ...headers, Prefer: 'return=minimal' }, body: JSON.stringify(data) })
-    message.textContent = response.ok ? 'Saved.' : 'Could not save. Check the Supabase setup and try again.'
-    if (response.ok) { form.reset(); (form.elements.namedItem('id') as HTMLInputElement).value = ''; document.querySelector<HTMLButtonElement>('#cancel-edit')!.hidden = true; await load() }
-  })
-  let searchTimer: number
-  document.querySelector<HTMLInputElement>('#catalog-search')!.addEventListener('input', (event) => {
-    window.clearTimeout(searchTimer)
-    const query = (event.currentTarget as HTMLInputElement).value.trim()
-    if (query.length < 2) { results.innerHTML = ''; return }
-    searchTimer = window.setTimeout(async () => {
-      const type = (form.elements.namedItem('type') as HTMLSelectElement).value
-      const status = document.querySelector<HTMLElement>('#search-status')!
-      status.textContent = 'Searching…'
-      try {
-        if (type === 'Game' && !config.rawgKey) { status.textContent = 'Add PUBLIC_RAWG_API_KEY to enable game search.'; return }
-        const endpoint = type === 'Book' ? `https://openlibrary.org/search.json?limit=6&title=${encodeURIComponent(query)}` : `https://api.rawg.io/api/games?key=${encodeURIComponent(config.rawgKey)}&page_size=6&search=${encodeURIComponent(query)}`
-        const response = await fetch(endpoint)
-        const data = await response.json()
-        const found = type === 'Book' ? (data.docs || []).map((book: any) => ({ title: book.title, creator: book.author_name?.[0] || '', image: book.cover_i ? `https://covers.openlibrary.org/b/id/${book.cover_i}-L.jpg` : '', description: '', imageAlt: `${book.title} cover` })) : (data.results || []).map((game: any) => ({ title: game.name, creator: game.developers?.[0]?.name || game.publishers?.[0]?.name || '', image: game.background_image || '', description: '', imageAlt: `${game.name} cover` }))
-        status.textContent = found.length ? 'Choose a result to fill in the title and cover.' : 'No results found.'
-        results.innerHTML = found.map((item: any, index: number) => `<button type="button" class="result" data-result="${index}">${safe(item.title)}${item.creator ? ` — ${safe(item.creator)}` : ''}</button>`).join('')
-        results.querySelectorAll<HTMLButtonElement>('[data-result]').forEach((button) => button.addEventListener('click', () => { const item = found[Number(button.dataset.result)]; for (const [key, value] of Object.entries(item)) { const input = form.elements.namedItem(key) as HTMLInputElement | null; if (input && value) input.value = String(value) } results.innerHTML = ''; status.textContent = 'Result selected. Add your rating and review.' }))
-      } catch { status.textContent = 'Catalog search is temporarily unavailable.' }
-    }, 350)
-  })
-  if (config.url && config.key && session?.access_token) load()
+  if (session?.access_token) load()
 </script>
-
 <style>
-  .admin-dashboard { max-width: 52rem; margin: 1.5rem auto; }
-  .dashboard-heading, .entry, .form-actions { display: flex; align-items: center; justify-content: space-between; gap: 0.75rem; }
-  .admin-form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0.85rem; margin: 1.25rem 0 2rem; padding: 1.25rem; border: 1px solid hsl(var(--border)); border-radius: 0.85rem; }
-  .admin-form label { display: grid; gap: 0.35rem; font-size: 0.85rem; font-weight: 600; }
-  .admin-form label:nth-child(3), .admin-form label:nth-child(8), .form-actions, #form-message { grid-column: 1 / -1; }
-  .admin-form input, .admin-form select, .admin-form textarea { width: 100%; padding: 0.65rem; border: 1px solid hsl(var(--border)); border-radius: 0.45rem; background: hsl(var(--background)); color: hsl(var(--foreground)); }
-  button { padding: 0.5rem 0.8rem; border: 1px solid hsl(var(--border)); border-radius: 0.45rem; background: hsl(var(--muted)); color: hsl(var(--foreground)); cursor: pointer; }
-  .entries-list { display: grid; gap: 0.65rem; }
-  .entry { justify-content: flex-start; padding: 0.65rem; border: 1px solid hsl(var(--border)); border-radius: 0.6rem; }
-  .entry img { width: 2.8rem; height: 3.6rem; object-fit: cover; border-radius: 0.25rem; background: hsl(var(--muted)); }
-  .entry div { flex: 1; }.entry p { margin: 0.2rem 0 0; color: hsl(var(--muted-foreground)); font-size: 0.8rem; }
-  .search-results { grid-column: 1 / -1; display: grid; gap: 0.4rem; }.result { text-align: left; }
-  @media (max-width: 600px) { .admin-form { grid-template-columns: 1fr; }.admin-form label, .admin-form label:nth-child(3), .admin-form label:nth-child(8), .form-actions, #form-message { grid-column: 1; }.entry { flex-wrap: wrap; } }
+  .dashboard { max-width: 66rem; margin: 0 auto; }
+  .page-heading { display:flex; align-items:flex-end; justify-content:space-between; gap:1rem; padding:2.35rem 0 1.8rem; }
+  .welcome { margin:0 0 .45rem; color:#728077; font-size:.82rem; }
+  h1 { margin:0; font-family:Georgia,serif; font-size:clamp(1.8rem,3vw,2.5rem); font-weight:500; letter-spacing:-.045em; }
+  .intro { margin:.55rem 0 0; color:#84908a; font-size:.9rem; }
+  .primary-action { flex:none; padding:.7rem .95rem; border-radius:.45rem; background:#377662; color:white; font-size:.82rem; font-weight:600; text-decoration:none; }
+  .primary-action:hover { background:#2d6553; }
+  .overview-grid { display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:.85rem; }
+  .overview-card { display:flex; align-items:flex-start; gap:.8rem; min-height:8.1rem; padding:1.1rem; border:1px solid #e7eaeb; border-radius:.65rem; background:white; }
+  .overview-icon { display:grid; width:2.35rem; height:2.35rem; flex:none; place-items:center; border-radius:.55rem; font-size:1rem; }
+  .book-icon { color:#397661; background:#e9f3ef; }.game-icon { color:#786444; background:#f5f0e5; }.books-icon { color:#74709a; background:#efedf7; }.rating-icon { color:#a07833; background:#f8f2e4; }
+  .overview-card p { margin:0 0 .28rem; color:#748079; font-size:.76rem; }
+  .overview-card strong { display:block; color:#26352e; font-size:1.65rem; font-weight:600; line-height:1.1; }
+  .overview-card small { display:block; margin-top:.35rem; color:#a1aaa4; font-size:.69rem; }
+  .recent-section { margin-top:2.1rem; }
+  .section-heading { display:flex; justify-content:space-between; align-items:flex-end; margin-bottom:.8rem; }
+  .section-heading h2 { margin:0; font-family:Georgia,serif; font-size:1.35rem; font-weight:500; letter-spacing:-.02em; }
+  .section-heading p { margin:.28rem 0 0; color:#8a948e; font-size:.78rem; }
+  .section-heading a { color:#397661; font-size:.78rem; font-weight:600; text-decoration:none; }
+  .recent-list { overflow:hidden; border:1px solid #e7eaeb; border-radius:.65rem; background:#fff; }
+  .recent-item { display:flex; align-items:center; gap:.9rem; min-height:4.5rem; padding:.6rem .85rem; border-bottom:1px solid #eff1f1; }
+  .recent-item:last-child { border-bottom:0; }
+  .recent-item img { width:2.4rem; height:3rem; border-radius:.25rem; background:#f0f1ef; object-fit:cover; }
+  .recent-copy { display:grid; flex:1; gap:.2rem; min-width:0; }.recent-copy strong { overflow:hidden; color:#334139; font-size:.83rem; font-weight:600; text-overflow:ellipsis; white-space:nowrap; }.recent-copy span { color:#8d9791; font-size:.75rem; }
+  .item-type { padding:.28rem .5rem; border-radius:99px; font-size:.68rem; }.item-type.book { background:#f0edf7; color:#70678d; }.item-type.game { background:#f6f0e4; color:#877047; }.item-rating { width:3.2rem; color:#8d784e; font-size:.76rem; text-align:right; }
+  .loading { margin:0; padding:1.5rem; color:#929b95; font-size:.82rem; }.empty-collection { padding:2rem 1rem; text-align:center; color:#839087; font-size:.85rem; }.empty-collection > span { color:#74a28f; font-size:1.5rem; }.empty-collection p { margin:.5rem 0; }.empty-collection a { color:#397661; font-weight:600; text-decoration:none; }
+  .shelf-note { display:flex; align-items:center; gap:.9rem; margin-top:1.25rem; padding:1rem 1.1rem; border-radius:.6rem; background:#edf4f0; color:#657b6f; font-size:.78rem; }.shelf-note > span { color:#57947b; font-size:1.1rem; }.shelf-note p { flex:1; margin:0; line-height:1.6; }.shelf-note strong { color:#426553; font-weight:650; }.shelf-note a { color:#397661; font-weight:650; text-decoration:none; }
+  @media(max-width:850px) { .overview-grid { grid-template-columns:repeat(2,minmax(0,1fr)); } .admin-main { padding-inline:1.4rem; } }
+  @media(max-width:520px) { .page-heading { align-items:flex-start; flex-direction:column; padding-top:1.6rem; }.overview-grid { gap:.6rem; }.overview-card { min-height:7.3rem; padding:.8rem; gap:.55rem; }.overview-card strong { font-size:1.4rem; }.recent-item { gap:.55rem; padding-inline:.6rem; }.item-type { display:none; }.shelf-note { align-items:flex-start; flex-wrap:wrap; }.shelf-note p { min-width:calc(100% - 2.5rem); }.shelf-note a { margin-left:2rem; } }
 </style>

@@ -1,0 +1,66 @@
+---
+import BaseHead from '@/components/BaseHead.astro'
+import '@/assets/styles/global.css'
+import '@/assets/styles/app.css'
+
+interface Props { title: string; active: 'dashboard' | 'library' | 'settings' }
+const { title, active } = Astro.props
+const links = [
+  { name: 'Dashboard', href: '/admin', key: 'dashboard', icon: '▦' },
+  { name: 'Library', href: '/admin/library', key: 'library', icon: '▤' },
+  { name: 'Settings', href: '/admin/settings', key: 'settings', icon: '⚙' },
+]
+---
+<html lang="en">
+  <head><BaseHead title={`${title} · Admin`} description="Library administration" /></head>
+  <body class="admin-body">
+    <div class="admin-shell">
+      <aside class="admin-sidebar">
+        <a class="admin-brand" href="/admin"><span class="brand-mark">L</span><span>little shelf<small>ADMINISTRATION</small></span></a>
+        <p class="nav-label">WORKSPACE</p>
+        <nav aria-label="Admin navigation">
+          {links.map((link) => <a class:list={['admin-nav-link', { active: active === link.key }]} href={link.href} aria-current={active === link.key ? 'page' : undefined}><span class="nav-icon" aria-hidden="true">{link.icon}</span>{link.name}</a>)}
+        </nav>
+        <div class="sidebar-bottom"><a href="/library" class="view-site"><span aria-hidden="true">↗</span> View public library</a><div class="admin-profile"><span class="profile-avatar">A</span><span>Administrator<small>Content manager</small></span><button id="logout" type="button" aria-label="Sign out">↗</button></div></div>
+      </aside>
+      <main class="admin-main"><div class="admin-topbar"><span>Workspace <span class="crumb-slash">/</span> {title}</span><span class="topbar-date">Your personal collection</span></div><slot /></main>
+    </div>
+  </body>
+</html>
+<script>
+  const logout = document.querySelector<HTMLButtonElement>('#logout')
+  logout?.addEventListener('click', async () => {
+    const session = JSON.parse(sessionStorage.getItem('library-admin-session') || 'null')
+    const url = import.meta.env.PUBLIC_SUPABASE_URL
+    const key = import.meta.env.PUBLIC_SUPABASE_ANON_KEY
+    if (url && key && session?.access_token) await fetch(`${url}/auth/v1/logout`, { method: 'POST', headers: { apikey: key, Authorization: `Bearer ${session.access_token}` } })
+    sessionStorage.removeItem('library-admin-session')
+    location.href = '/admin/login'
+  })
+</script>
+<style>
+  :global(*) { box-sizing: border-box; }
+  :global(body.admin-body) { margin: 0; min-height: 100vh; background: #f6f7f8; color: #202a35; font-family: var(--font-satoshi), Inter, sans-serif; }
+  .admin-shell { min-height: 100vh; }
+  .admin-sidebar { position: fixed; inset: 0 auto 0 0; z-index: 2; display: flex; width: 248px; flex-direction: column; padding: 1.55rem 1.1rem 1rem; background: #fff; border-right: 1px solid #e9ecef; }
+  .admin-brand { display: flex; align-items: center; gap: .75rem; padding: 0 .5rem 2.3rem; color: #202a35; font-size: 1rem; font-weight: 700; text-decoration: none; letter-spacing: -.02em; }
+  .admin-brand small, .admin-profile small { display: block; margin-top: .15rem; color: #9aa3ad; font-size: .62rem; font-weight: 600; letter-spacing: .11em; }
+  .brand-mark { display: grid; width: 2.25rem; height: 2.25rem; place-items: center; border-radius: .7rem; background: #e7f3ef; color: #317968; font-family: Georgia, serif; font-size: 1.35rem; }
+  .nav-label { margin: 0 .65rem .65rem; color: #9aa3ad; font-size: .65rem; font-weight: 700; letter-spacing: .12em; }
+  .admin-sidebar nav { display: grid; gap: .3rem; }
+  .admin-nav-link { display: flex; align-items: center; gap: .75rem; padding: .7rem .75rem; border-radius: .55rem; color: #687482; font-size: .88rem; text-decoration: none; }
+  .admin-nav-link:hover { background: #f6f8f7; color: #2d6658; }
+  .admin-nav-link.active { background: #eaf4f0; color: #286856; font-weight: 650; }
+  .nav-icon { width: 1.2rem; text-align: center; font-size: 1rem; }
+  .sidebar-bottom { margin-top: auto; }
+  .view-site { display: flex; gap: .6rem; align-items: center; padding: .75rem; color: #687482; font-size: .82rem; text-decoration: none; }
+  .admin-profile { display: flex; align-items: center; gap: .65rem; margin-top: .65rem; padding: .85rem .25rem .2rem; border-top: 1px solid #eef0f2; font-size: .78rem; font-weight: 650; }
+  .profile-avatar { display: grid; width: 2rem; height: 2rem; place-items: center; border-radius: 50%; background: #f1eade; color: #79684d; }
+  .admin-profile small { color: #929ba5; font-size: .72rem; font-weight: 400; letter-spacing: 0; }
+  .admin-profile button { margin-left: auto; border: 0; background: transparent; color: #89929c; font-size: 1rem; cursor: pointer; }
+  .admin-main { min-height: 100vh; margin-left: 248px; padding: 0 3.2rem 4rem; }
+  .admin-topbar { display: flex; min-height: 4.15rem; align-items: center; justify-content: space-between; border-bottom: 1px solid #e9ecef; color: #77828d; font-size: .78rem; }
+  .crumb-slash { padding: 0 .45rem; color: #b5bdc4; }
+  .topbar-date { color: #9aa3ad; }
+  @media(max-width: 760px) { .admin-sidebar { position: static; width: auto; padding: .7rem 1rem; border-right: 0; border-bottom: 1px solid #e9ecef; } .admin-brand { padding: .2rem .1rem .65rem; } .nav-label, .sidebar-bottom { display:none; } .admin-sidebar nav { display:flex; overflow-x:auto; } .admin-nav-link { flex:none; padding:.55rem .7rem; } .admin-main { margin-left:0; padding:0 1rem 3rem; } .topbar-date { display:none; } }
+</style>
